@@ -666,32 +666,28 @@ ${nokids ? '- 노키즈존은 반드시 제외하고 아이 입장 가능한 곳
 - JSON만 반환, 절대 다른 텍스트 포함 금지`;
 
   try {
-    let plan = null;
-    try {
-      const res = await fetch("/.netlify/functions/generate-plan", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          destination: state.destination,
-          duration: state.duration,
-          companion: state.companion,
-          extras: state.extras,
-          themes: state.themes,
-          dateType: state.dateType,
-          dateStart: state.dateStart,
-          dateEnd: state.dateEnd
-        })
-      });
+    const res = await fetch("/.netlify/functions/generate-plan", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        destination: state.destination,
+        duration: state.duration,
+        companion: state.companion,
+        extras: state.extras,
+        themes: state.themes,
+        dateType: state.dateType,
+        dateStart: state.dateStart,
+        dateEnd: state.dateEnd
+      })
+    });
 
-      const data = await res.json();
-      plan = data.plan || null;
-    } catch(fetchError) {
-      console.error('function fetch failed:', fetchError);
+    const data = await res.json();
+
+    if (!res.ok || !data.plan) {
+      throw new Error(data.error || data.detail || '일정 생성 실패');
     }
 
-    if (!plan || !plan.intro || !Array.isArray(plan.days) || plan.days.length === 0) {
-      plan = makeSpecificFallbackPlan(state.destination);
-    }
+    const plan = data.plan;
 
     await new Promise(r => setTimeout(r, 400));
 
@@ -702,140 +698,11 @@ ${nokids ? '- 노키즈존은 반드시 제외하고 아이 입장 가능한 곳
     updateProgress(5);
   } catch(e) {
     console.error('generatePlan error:', e);
-    const fallback = makeSpecificFallbackPlan(state.destination);
-    const tags = [state.companion, ...state.extras.filter(e => e !== '노키즈존 제외'), ...state.themes.slice(0,2)];
-    renderResult(fallback, state.destination || '추천 여행지', state.duration || '여행 기간', tags);
-    showScreen('screen-result');
-    updateProgress(5);
+    alert('구체적인 장소명 생성에 실패했어요. 잠시 후 다시 시도해주세요.');
+    showScreen('screen-quiz');
+    goStep(5);
   }
 }
-
-
-function makeSpecificFallbackPlan(destination) {
-  const dest = destination || '도쿄';
-  const plans = {
-    '도쿄': {
-      intro: '도쿄의 감성 카페와 산책, 쇼핑 명소를 부담 없는 동선으로 즐기는 여행이에요.',
-      days: [
-        {
-          day: 'Day 1',
-          area: '시부야 · 다이칸야마',
-          theme: '감성 카페 & 쇼핑',
-          slots: [
-            { time: '오전', emoji: '☕', place: 'Fuglen Tokyo', desc: '요요기공원 근처의 인기 카페로, 커피와 가벼운 브런치로 도쿄 여행을 시작하기 좋아요.', tag: '카페' },
-            { time: '오후', emoji: '📚', place: '다이칸야마 T-Site', desc: '츠타야 서점과 라이프스타일 숍이 모여 있어 천천히 둘러보기 좋은 감성 코스예요.', tag: '쇼핑' },
-            { time: '저녁', emoji: '🌃', place: '시부야 스카이', desc: '도쿄 야경을 한눈에 볼 수 있는 전망 명소예요. 방문 전 예약 가능 여부를 확인해보세요.', tag: '전망' }
-          ]
-        },
-        {
-          day: 'Day 2',
-          area: '하라주쿠 · 오모테산도',
-          theme: '골목 산책 & 트렌디한 쇼핑',
-          slots: [
-            { time: '오전', emoji: '🌿', place: '메이지 신궁', desc: '도심 속 숲길을 따라 조용히 걷기 좋은 명소로, 오전 방문이 특히 여유로워요.', tag: '문화' },
-            { time: '오후', emoji: '🛍️', place: '캣스트리트', desc: '편집숍과 카페가 이어진 거리라 쇼핑과 산책을 함께 즐기기 좋아요.', tag: '쇼핑' },
-            { time: '저녁', emoji: '🍜', place: '이치란 라멘 신주쿠점', desc: '접근성이 좋은 라멘집으로 가볍게 저녁 식사하기 좋아요. 시간대에 따라 대기가 있을 수 있어요.', tag: '맛집' }
-          ]
-        }
-      ]
-    },
-    '오사카': {
-      intro: '먹거리와 쇼핑, 야경을 짧은 동선으로 즐기는 오사카 여행이에요.',
-      days: [
-        {
-          day: 'Day 1',
-          area: '난바 · 도톤보리',
-          theme: '먹거리 & 쇼핑',
-          slots: [
-            { time: '오전', emoji: '🛍️', place: '신사이바시스지 상점가', desc: '쇼핑과 간식을 함께 즐기기 좋은 중심 상권이에요.', tag: '쇼핑' },
-            { time: '오후', emoji: '📸', place: '도톤보리 글리코사인', desc: '오사카 대표 인증샷 명소로, 처음 방문한다면 빼기 어려운 코스예요.', tag: '명소' },
-            { time: '저녁', emoji: '🍢', place: '쿠시카츠 다루마 신세카이 본점', desc: '오사카식 꼬치튀김을 즐길 수 있는 유명 식당이에요.', tag: '맛집' }
-          ]
-        },
-        {
-          day: 'Day 2',
-          area: '우메다 · 나카자키초',
-          theme: '전망 & 감성 골목',
-          slots: [
-            { time: '오전', emoji: '🏙️', place: '우메다 스카이빌딩 공중정원', desc: '오사카 시내를 한눈에 볼 수 있는 전망 명소예요.', tag: '전망' },
-            { time: '오후', emoji: '☕', place: '나카자키초 카페거리', desc: '작은 카페와 잡화점이 많아 느긋하게 걷기 좋은 동네예요.', tag: '카페' },
-            { time: '저녁', emoji: '🍜', place: '이치란 라멘 도톤보리점', desc: '접근성이 좋아 저녁 식사 후보로 무난해요. 대기 시간이 있을 수 있어요.', tag: '맛집' }
-          ]
-        }
-      ]
-    },
-    '부산': {
-      intro: '바다와 골목, 맛집을 여유롭게 엮어 부산의 분위기를 깊게 느끼는 여행이에요.',
-      days: [
-        {
-          day: 'Day 1',
-          area: '해운대 · 달맞이길',
-          theme: '바다 산책 & 감성 카페',
-          slots: [
-            { time: '오전', emoji: '🌊', place: '해운대해수욕장', desc: '부산 여행의 시작으로 가장 부담 없는 바다 산책 코스예요.', tag: '바다' },
-            { time: '오후', emoji: '☕', place: '달맞이길', desc: '해운대에서 이어지는 감성 산책길로 카페와 전망 포인트가 많아요.', tag: '카페' },
-            { time: '저녁', emoji: '🥩', place: '해운대암소갈비집', desc: '부산 대표 식당 중 하나로 저녁 식사 후보로 좋아요. 방문 전 예약 여부를 확인해보세요.', tag: '맛집' }
-          ]
-        },
-        {
-          day: 'Day 2',
-          area: '흰여울문화마을 · 남포동',
-          theme: '골목 산책 & 로컬 먹거리',
-          slots: [
-            { time: '오전', emoji: '🏘️', place: '흰여울문화마을', desc: '바다를 따라 걷는 골목 풍경이 예뻐 사진 찍기 좋은 코스예요.', tag: '산책' },
-            { time: '오후', emoji: '🛍️', place: '국제시장', desc: '부산의 로컬 분위기를 느끼기 좋은 시장 코스예요.', tag: '시장' },
-            { time: '저녁', emoji: '🍢', place: 'BIFF광장 씨앗호떡 거리', desc: '가볍게 간식과 야식까지 즐기기 좋은 코스예요.', tag: '간식' }
-          ]
-        }
-      ]
-    },
-    '제주도': {
-      intro: '바다와 숲, 카페를 천천히 이어가며 제주다운 쉼을 느끼는 여행이에요.',
-      days: [
-        {
-          day: 'Day 1',
-          area: '애월 · 협재',
-          theme: '서쪽 바다 & 감성 카페',
-          slots: [
-            { time: '오전', emoji: '☕', place: '카페 노티드 제주 애월', desc: '애월 바다와 함께 가볍게 시작하기 좋은 카페 코스예요.', tag: '카페' },
-            { time: '오후', emoji: '🌊', place: '협재해수욕장', desc: '맑은 바다색으로 유명해 산책과 사진 모두 만족도가 높은 장소예요.', tag: '바다' },
-            { time: '저녁', emoji: '🥩', place: '돈사돈 본관', desc: '제주 흑돼지 식당으로 유명한 곳이에요. 대기 여부 확인을 추천해요.', tag: '맛집' }
-          ]
-        },
-        {
-          day: 'Day 2',
-          area: '성산 · 구좌',
-          theme: '자연 풍경 & 동쪽 감성',
-          slots: [
-            { time: '오전', emoji: '⛰️', place: '성산일출봉', desc: '제주 동쪽 대표 명소로, 무리하지 않게 둘러보려면 오전 방문이 좋아요.', tag: '자연' },
-            { time: '오후', emoji: '🌿', place: '비자림', desc: '아이 또는 부모님과 함께라면 비교적 걷기 편한 숲길 코스로 추천해요.', tag: '숲' },
-            { time: '저녁', emoji: '🍚', place: '명진전복', desc: '전복돌솥밥으로 유명한 식당이에요. 이른 시간 방문을 추천해요.', tag: '맛집' }
-          ]
-        }
-      ]
-    }
-  };
-
-  const key = Object.keys(plans).find(k => dest.includes(k));
-  if (key) return plans[key];
-
-  return {
-    intro: `${dest}에서 실제 장소 중심으로 구성한 여행 요약이에요.`,
-    days: [
-      {
-        day: 'Day 1',
-        area: dest,
-        theme: '현지 인기 코스',
-        slots: [
-          { time: '오전', emoji: '📍', place: '장소 정보를 다시 생성해주세요', desc: '이 도시는 아직 기본 장소 데이터가 부족해요. 다시 생성하면 AI가 실제 장소명으로 추천을 시도합니다.', tag: '안내' },
-          { time: '오후', emoji: '📍', place: '장소 정보를 다시 생성해주세요', desc: '무료 일정에는 실제 상호명과 명소명이 나와야 하므로 일반명사는 표시하지 않도록 했어요.', tag: '안내' },
-          { time: '저녁', emoji: '📍', place: '장소 정보를 다시 생성해주세요', desc: '다시 만들기 또는 여행지명을 더 구체적으로 입력해보세요. 예: 도쿄 시부야, 부산 해운대', tag: '안내' }
-        ]
-      }
-    ]
-  };
-}
-
 
 // 결과 렌더링 공통 함수
 function renderResult(plan, dest, duration, tags) {
