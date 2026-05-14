@@ -7,404 +7,243 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
-  --bg: #ffffff;
-  --bg2: #f7faf9;
-  --surface: #ffffff;
-  --border: #e8efed;
-  --text: #111917;
-  --muted: #7a9189;
-  --muted2: #aabdb7;
-  --mint: #2ec4a0;
-  --mint-light: #e8faf5;
-  --mint-mid: #b5ede0;
-  --mint-dark: #1ea085;
+  --bg: #ffffff; --bg2: #f7faf9; --surface: #ffffff;
+  --border: #e8efed; --text: #111917; --muted: #7a9189; --muted2: #aabdb7;
+  --mint: #2ec4a0; --mint-light: #e8faf5; --mint-mid: #b5ede0; --mint-dark: #1ea085;
   --shadow: 0 2px 24px rgba(46,196,160,0.10);
 }
-
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
 
 /* HEADER */
 header {
-  padding: 20px 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 100;
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(12px);
+  padding: 16px 24px; display: flex; align-items: center; justify-content: space-between;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
 }
-
-.logo {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--text);
-  letter-spacing: -0.5px;
-}
+.logo { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 600; color: var(--text); letter-spacing: -0.5px; }
 .logo span { color: var(--mint); }
 
-.progress-wrap { display: flex; align-items: center; gap: 10px; }
-.progress-bar { width: 100px; height: 3px; background: var(--border); border-radius: 99px; overflow: hidden; }
-.progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--mint), #5eead4);
-  border-radius: 99px;
-  transition: width 0.4s cubic-bezier(.4,0,.2,1);
-  width: 0%;
+.header-right { display: flex; align-items: center; gap: 14px; }
+.progress-wrap { display: flex; align-items: center; gap: 8px; }
+.progress-bar { width: 90px; height: 3px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--mint), #5eead4); border-radius: 99px; transition: width 0.4s cubic-bezier(.4,0,.2,1); width: 0%; }
+.progress-label { font-size: 11px; color: var(--muted2); font-weight: 500; }
+
+/* BACK BTN */
+.back-btn {
+  display: none; align-items: center; gap: 5px;
+  background: none; border: 1.5px solid var(--border); border-radius: 8px;
+  padding: 7px 13px; font-family: 'DM Sans', sans-serif; font-size: 13px;
+  font-weight: 500; color: var(--muted); cursor: pointer; transition: all 0.18s;
 }
-.progress-label { font-size: 12px; color: var(--muted2); font-weight: 500; }
+.back-btn.visible { display: flex; }
+.back-btn:hover { border-color: var(--mint); color: var(--mint); }
 
 /* SCREENS */
-.screen { display: none; min-height: 100vh; padding-top: 72px; }
+.screen { display: none; min-height: 100vh; padding-top: 68px; }
 .screen.active { display: flex; flex-direction: column; }
 
 /* LANDING */
 #screen-landing {
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 72px 24px 60px;
-  position: relative;
-  background: var(--bg);
+  align-items: center; justify-content: center; text-align: center;
+  padding: 68px 24px 60px; position: relative; background: var(--bg);
 }
-
-.landing-blob {
-  position: absolute; top: -100px; right: -100px;
-  width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(46,196,160,0.12) 0%, transparent 65%);
-  border-radius: 50%; pointer-events: none;
-}
-.landing-blob2 {
-  position: absolute; bottom: -80px; left: -80px;
-  width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(46,196,160,0.07) 0%, transparent 65%);
-  border-radius: 50%; pointer-events: none;
-}
-
-.landing-tag {
-  display: inline-flex; align-items: center; gap: 6px;
-  background: var(--mint-light); color: var(--mint-dark);
-  font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
-  padding: 7px 16px; border-radius: 99px; margin-bottom: 28px;
-  animation: fadeUp 0.5s ease both;
-}
-
-.landing-h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(36px, 6vw, 60px);
-  font-weight: 600; line-height: 1.2; margin-bottom: 20px;
-  color: var(--text); animation: fadeUp 0.5s 0.1s ease both; letter-spacing: -1px;
-}
+.landing-blob { position: absolute; top: -100px; right: -100px; width: 500px; height: 500px; background: radial-gradient(circle, rgba(46,196,160,0.12) 0%, transparent 65%); border-radius: 50%; pointer-events: none; }
+.landing-blob2 { position: absolute; bottom: -80px; left: -80px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(46,196,160,0.07) 0%, transparent 65%); border-radius: 50%; pointer-events: none; }
+.landing-tag { display: inline-flex; align-items: center; gap: 6px; background: var(--mint-light); color: var(--mint-dark); font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 7px 16px; border-radius: 99px; margin-bottom: 28px; animation: fadeUp 0.5s ease both; }
+.landing-h1 { font-family: 'Playfair Display', serif; font-size: clamp(34px, 6vw, 56px); font-weight: 600; line-height: 1.2; margin-bottom: 18px; animation: fadeUp 0.5s 0.1s ease both; letter-spacing: -1px; }
 .landing-h1 em { font-style: italic; color: var(--mint); }
-
-.landing-sub {
-  font-size: 17px; color: var(--muted); line-height: 1.7; margin-bottom: 44px;
-  animation: fadeUp 0.5s 0.2s ease both; font-weight: 400;
-}
-
-.start-btn {
-  display: inline-flex; align-items: center; gap: 10px;
-  background: var(--mint); color: white; border: none; border-radius: 14px;
-  padding: 17px 40px; font-family: 'DM Sans', sans-serif;
-  font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s;
-  animation: fadeUp 0.5s 0.3s ease both;
-  box-shadow: 0 4px 20px rgba(46,196,160,0.35);
-}
+.landing-sub { font-size: 16px; color: var(--muted); line-height: 1.7; margin-bottom: 40px; animation: fadeUp 0.5s 0.2s ease both; }
+.start-btn { display: inline-flex; align-items: center; gap: 10px; background: var(--mint); color: white; border: none; border-radius: 14px; padding: 16px 38px; font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; animation: fadeUp 0.5s 0.3s ease both; box-shadow: 0 4px 20px rgba(46,196,160,0.35); }
 .start-btn:hover { background: var(--mint-dark); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(46,196,160,0.4); }
-
-.landing-note { margin-top: 18px; font-size: 13px; color: var(--muted2); animation: fadeUp 0.5s 0.4s ease both; }
-
-.landing-features {
-  display: flex; gap: 32px; margin-top: 64px;
-  justify-content: center; flex-wrap: wrap;
-  animation: fadeUp 0.5s 0.5s ease both;
-}
-.lf-item { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
-.lf-dot { width: 8px; height: 8px; background: var(--mint); border-radius: 50%; }
+.landing-note { margin-top: 16px; font-size: 13px; color: var(--muted2); animation: fadeUp 0.5s 0.4s ease both; }
+.landing-features { display: flex; gap: 28px; margin-top: 56px; justify-content: center; flex-wrap: wrap; animation: fadeUp 0.5s 0.5s ease both; }
+.lf-item { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--muted); }
+.lf-dot { width: 7px; height: 7px; background: var(--mint); border-radius: 50%; }
 
 /* QUIZ */
-#screen-quiz {
-  align-items: center; justify-content: center;
-  padding: 72px 24px 48px; background: var(--bg2);
-}
+#screen-quiz { align-items: center; justify-content: center; padding: 68px 24px 48px; background: var(--bg2); }
 .quiz-wrap { width: 100%; max-width: 540px; }
-.quiz-step { display: none; animation: fadeUp 0.35s ease both; }
+.quiz-step { display: none; animation: fadeUp 0.3s ease both; }
 .quiz-step.active { display: block; }
+.step-num { font-size: 11px; font-weight: 600; color: var(--mint); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.step-q { font-family: 'Playfair Display', serif; font-size: clamp(20px, 4vw, 28px); font-weight: 600; line-height: 1.3; margin-bottom: 6px; color: var(--text); letter-spacing: -0.5px; }
+.step-sub { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
 
-.step-num { font-size: 11px; font-weight: 600; color: var(--mint); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
-.step-q { font-family: 'Playfair Display', serif; font-size: clamp(22px, 4vw, 30px); font-weight: 600; line-height: 1.3; margin-bottom: 8px; color: var(--text); letter-spacing: -0.5px; }
-.step-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
-
-/* DEST INPUT */
-.dest-input {
-  width: 100%; background: var(--surface);
-  border: 2px solid var(--border); border-radius: 14px;
-  padding: 16px 20px; font-family: 'DM Sans', sans-serif;
-  font-size: 17px; color: var(--text); outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s; margin-bottom: 14px;
-}
-.dest-input:focus { border-color: var(--mint); box-shadow: 0 0 0 4px rgba(46,196,160,0.1); }
+/* DEST */
+.dest-input { width: 100%; background: var(--surface); border: 2px solid var(--border); border-radius: 14px; padding: 15px 18px; font-family: 'DM Sans', sans-serif; font-size: 16px; color: var(--text); outline: none; transition: all 0.2s; margin-bottom: 12px; }
+.dest-input:focus { border-color: var(--mint); box-shadow: 0 0 0 4px rgba(46,196,160,0.08); }
 .dest-input::placeholder { color: var(--muted2); }
-
-.dest-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
-.dest-chip {
-  background: var(--surface); border: 1.5px solid var(--border);
-  border-radius: 99px; padding: 8px 16px;
-  font-size: 13px; font-weight: 500; cursor: pointer;
-  transition: all 0.15s; color: var(--muted);
-}
+.dest-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+.dest-chip { background: var(--surface); border: 1.5px solid var(--border); border-radius: 99px; padding: 7px 14px; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; color: var(--muted); }
 .dest-chip:hover { border-color: var(--mint); color: var(--mint); background: var(--mint-light); }
 
 /* DURATION */
 .duration-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 24px; }
-.dur-card {
-  background: var(--surface); border: 2px solid var(--border);
-  border-radius: 12px; padding: 16px 10px;
-  cursor: pointer; text-align: center; transition: all 0.18s; user-select: none;
-}
+.dur-card { background: var(--surface); border: 2px solid var(--border); border-radius: 12px; padding: 14px 8px; cursor: pointer; text-align: center; transition: all 0.18s; user-select: none; }
 .dur-card:hover { border-color: var(--mint-mid); background: var(--mint-light); transform: translateY(-1px); }
 .dur-card.selected { border-color: var(--mint); background: var(--mint-light); box-shadow: 0 0 0 1px var(--mint); }
-.dur-days { font-size: 20px; font-weight: 700; color: var(--mint); }
+.dur-days { font-size: 18px; font-weight: 700; color: var(--mint); }
 .dur-label { font-size: 11px; color: var(--muted); margin-top: 3px; font-weight: 500; }
 
 /* OPTION CARDS */
-.card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+.card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
 .card-grid.col3 { grid-template-columns: 1fr 1fr 1fr; }
-
-.option-card {
-  background: var(--surface); border: 2px solid var(--border);
-  border-radius: 16px; padding: 20px 16px;
-  cursor: pointer; transition: all 0.18s; text-align: center;
-  user-select: none; position: relative;
-}
+.option-card { background: var(--surface); border: 2px solid var(--border); border-radius: 14px; padding: 18px 14px; cursor: pointer; transition: all 0.18s; text-align: center; user-select: none; position: relative; }
 .option-card:hover { border-color: var(--mint-mid); background: var(--mint-light); transform: translateY(-2px); box-shadow: var(--shadow); }
 .option-card.selected { border-color: var(--mint); background: var(--mint-light); box-shadow: 0 0 0 1px var(--mint); }
-.option-card.selected::after {
-  content: '✓'; position: absolute; top: 10px; right: 12px;
-  font-size: 11px; font-weight: 700; color: var(--mint);
-  background: white; width: 18px; height: 18px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  border: 1.5px solid var(--mint); line-height: 18px;
-}
-.card-emoji { font-size: 26px; margin-bottom: 10px; }
-.card-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; color: var(--text); }
-.card-desc { font-size: 12px; color: var(--muted); line-height: 1.4; }
+.option-card.selected::after { content: '✓'; position: absolute; top: 9px; right: 11px; font-size: 10px; font-weight: 700; color: var(--mint); background: white; width: 17px; height: 17px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1.5px solid var(--mint); line-height: 17px; }
+.card-emoji { font-size: 24px; margin-bottom: 8px; }
+.card-title { font-size: 14px; font-weight: 600; margin-bottom: 3px; color: var(--text); }
+.card-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
 
 /* COMPANION EXTRAS */
-.companion-extras {
-  margin-top: -8px;
-  margin-bottom: 24px;
-  background: var(--bg2);
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  padding: 16px 18px;
-}
-.extras-label { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: 0.5px; margin-bottom: 12px; text-transform: uppercase; }
+.companion-extras { margin-bottom: 20px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+.extras-label { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.5px; margin-bottom: 12px; text-transform: uppercase; }
 .extra-checks { display: flex; flex-direction: column; gap: 10px; }
-.extra-check {
-  display: flex; align-items: center; gap: 12px;
-  cursor: pointer; user-select: none;
-}
+.extra-check { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; user-select: none; }
 .extra-check input[type="checkbox"] { display: none; }
-.check-box {
-  width: 20px; height: 20px; border: 2px solid var(--border);
-  border-radius: 6px; background: white;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.15s; flex-shrink: 0;
-  font-size: 12px; color: transparent;
-}
-.extra-check input:checked + .check-box {
-  background: var(--mint); border-color: var(--mint); color: white;
-}
+.check-box { width: 20px; height: 20px; border: 2px solid var(--border); border-radius: 6px; background: white; display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0; font-size: 11px; color: transparent; margin-top: 2px; }
+.extra-check input:checked + .check-box { background: var(--mint); border-color: var(--mint); color: white; }
 .check-label { font-size: 14px; color: var(--text); font-weight: 500; }
-.check-sub { font-size: 12px; color: var(--muted); }
+.check-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
-/* DATE STEP */
-.date-options { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
-.date-opt {
-  background: var(--surface); border: 2px solid var(--border);
-  border-radius: 14px; padding: 18px 20px;
-  cursor: pointer; transition: all 0.18s; display: flex; align-items: center; gap: 14px;
+/* NO KIDS SUB-OPTION */
+.nokids-option {
+  display: none; margin-top: 8px; margin-left: 32px;
+  background: #fff8f0; border: 1.5px solid #f0e0c0;
+  border-radius: 10px; padding: 10px 14px;
 }
+.nokids-option.visible { display: block; }
+.nokids-option label { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.nokids-option .check-label { font-size: 13px; }
+.nokids-option .check-sub { font-size: 11px; }
+
+/* DATE */
+.date-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+.date-opt { background: var(--surface); border: 2px solid var(--border); border-radius: 14px; padding: 16px 18px; cursor: pointer; transition: all 0.18s; display: flex; align-items: center; gap: 14px; }
 .date-opt:hover { border-color: var(--mint-mid); background: var(--mint-light); }
 .date-opt.selected { border-color: var(--mint); background: var(--mint-light); }
 .date-opt-icon { font-size: 22px; }
-.date-opt-text {}
 .date-opt-title { font-size: 15px; font-weight: 600; color: var(--text); }
 .date-opt-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
-
-.date-input-wrap { display: none; margin-top: 12px; gap: 10px; }
+.date-input-wrap { display: none; gap: 10px; margin-bottom: 16px; }
 .date-input-wrap.visible { display: flex; }
-.date-input {
-  flex: 1; background: var(--surface); border: 2px solid var(--border);
-  border-radius: 10px; padding: 12px 14px;
-  font-family: 'DM Sans', sans-serif; font-size: 14px;
-  color: var(--text); outline: none; transition: border-color 0.2s;
-}
-.date-input:focus { border-color: var(--mint); }
+.date-field { flex: 1; }
 .date-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; font-weight: 500; }
+.date-input { width: 100%; background: var(--surface); border: 2px solid var(--border); border-radius: 10px; padding: 11px 13px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); outline: none; transition: all 0.2s; }
+.date-input:focus { border-color: var(--mint); }
+
+/* BTN ROW */
+.btn-row { display: flex; gap: 10px; align-items: stretch; margin-top: 8px; }
+
+/* BACK BTN (in row) */
+.back-btn {
+  flex: 0 0 auto; display: flex; align-items: center; justify-content: center; gap: 5px;
+  background: white; border: 1.5px solid var(--border); border-radius: 12px;
+  padding: 15px 18px; font-family: 'DM Sans', sans-serif; font-size: 15px;
+  font-weight: 500; color: var(--muted); cursor: pointer; transition: all 0.18s;
+  white-space: nowrap;
+}
+.back-btn:hover { border-color: var(--mint); color: var(--mint); }
+.back-btn.hidden { display: none; }
 
 /* NEXT BTN */
-.next-btn {
-  width: 100%; padding: 16px;
-  background: var(--mint); color: white; border: none;
-  border-radius: 12px; font-family: 'DM Sans', sans-serif;
-  font-size: 15px; font-weight: 600; cursor: pointer;
-  transition: all 0.2s; opacity: 0.35; pointer-events: none;
-  box-shadow: 0 4px 16px rgba(46,196,160,0.25);
-}
+.next-btn { flex: 1; padding: 15px; background: var(--mint); color: white; border: none; border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; opacity: 0.35; pointer-events: none; box-shadow: 0 4px 20px rgba(46,196,160,0.3); }
 .next-btn.enabled { opacity: 1; pointer-events: all; }
-.next-btn.enabled:hover { background: var(--mint-dark); transform: translateY(-1px); box-shadow: 0 6px 24px rgba(46,196,160,0.35); }
+.next-btn.enabled:hover { background: var(--mint-dark); transform: translateY(-1px); box-shadow: 0 6px 28px rgba(46,196,160,0.4); }
 
 /* LOADING */
 #screen-loading { align-items: center; justify-content: center; text-align: center; gap: 20px; background: var(--bg); }
-.loading-ring-wrap { position: relative; width: 72px; height: 72px; }
+.loading-ring-wrap { position: relative; width: 68px; height: 68px; }
 .loading-ring { position: absolute; inset: 0; border: 3px solid var(--border); border-top-color: var(--mint); border-radius: 50%; animation: spin 0.9s linear infinite; }
 .loading-ring2 { position: absolute; inset: 12px; border: 2px solid transparent; border-top-color: var(--mint-mid); border-radius: 50%; animation: spin 0.6s linear infinite reverse; }
-.loading-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 600; color: var(--text); }
-.loading-steps { display: flex; flex-direction: column; gap: 10px; }
-.load-step { font-size: 14px; color: var(--muted2); transition: color 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.loading-title { font-family: 'Playfair Display', serif; font-size: 21px; font-weight: 600; color: var(--text); }
+.loading-steps { display: flex; flex-direction: column; gap: 9px; }
+.load-step { font-size: 13px; color: var(--muted2); transition: color 0.3s; display: flex; align-items: center; justify-content: center; gap: 7px; }
 .load-step.done { color: var(--mint); font-weight: 500; }
 
-/* RESULT - FREE */
-#screen-result { padding: 72px 0 0; background: var(--bg2); }
-.result-inner { max-width: 700px; margin: 0 auto; padding: 40px 24px 0; }
+/* RESULT */
+#screen-result { padding: 68px 0 0; background: var(--bg2); }
+.result-inner { max-width: 720px; margin: 0 auto; padding: 36px 24px 0; }
 
-.result-hero {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 20px; padding: 28px 32px; margin-bottom: 20px;
-  display: flex; align-items: center; justify-content: space-between;
-  box-shadow: var(--shadow);
-}
-.result-dest { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 600; color: var(--text); letter-spacing: -0.5px; }
-.result-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
-.rtag { background: var(--mint-light); color: var(--mint-dark); border-radius: 99px; padding: 4px 12px; font-size: 11px; font-weight: 600; }
-.free-badge { background: var(--mint-light); color: var(--mint-dark); border: 1.5px solid var(--mint-mid); border-radius: 99px; padding: 6px 14px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; white-space: nowrap; }
+.result-hero { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 24px 28px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow); }
+.result-dest { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 600; color: var(--text); letter-spacing: -0.5px; }
+.result-tags { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 8px; }
+.rtag { background: var(--mint-light); color: var(--mint-dark); border-radius: 99px; padding: 4px 11px; font-size: 11px; font-weight: 600; }
+.free-badge { background: var(--mint-light); color: var(--mint-dark); border: 1.5px solid var(--mint-mid); border-radius: 99px; padding: 5px 13px; font-size: 11px; font-weight: 600; letter-spacing: 0.5px; white-space: nowrap; }
 
-.ad-block {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 12px; padding: 16px 24px; margin-bottom: 20px;
-  display: flex; align-items: center; justify-content: center;
-  min-height: 80px; color: var(--muted2); font-size: 12px;
-}
-.ad-tag { background: var(--border); color: var(--muted2); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; padding: 2px 7px; border-radius: 3px; margin-right: 10px; }
+.ad-block { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 20px; margin-bottom: 18px; display: flex; align-items: center; justify-content: center; min-height: 72px; color: var(--muted2); font-size: 12px; }
+.ad-tag { background: var(--border); color: var(--muted2); font-size: 9px; letter-spacing: 1px; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; margin-right: 8px; }
 
-/* FREE RESULT CARD - 간단 버전 */
-.free-result-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 20px; padding: 32px; margin-bottom: 20px;
-  box-shadow: var(--shadow);
-}
+/* FREE INTRO */
+.result-intro { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 22px; margin-bottom: 18px; display: flex; align-items: flex-start; gap: 12px; box-shadow: var(--shadow); }
+.result-intro-icon { font-size: 20px; flex-shrink: 0; }
+.result-intro-text { font-size: 14px; font-style: italic; color: var(--muted); line-height: 1.7; }
 
-.free-result-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 16px; font-weight: 600; color: var(--text);
-  margin-bottom: 20px; padding-bottom: 16px;
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 8px;
-}
+/* DAY CARDS */
+.day-cards { display: flex; flex-direction: column; gap: 14px; margin-bottom: 18px; }
 
-.free-day-row {
-  display: flex; align-items: flex-start; gap: 14px;
-  padding: 14px 0; border-bottom: 1px solid var(--border);
-}
-.free-day-row:last-child { border-bottom: none; }
+.day-card { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; box-shadow: var(--shadow); }
 
-.free-day-badge {
-  background: var(--mint); color: white;
-  font-size: 10px; font-weight: 700; letter-spacing: 1px;
-  padding: 4px 10px; border-radius: 99px; white-space: nowrap; margin-top: 2px;
-}
+.day-card-header { display: flex; align-items: center; gap: 12px; padding: 16px 22px; border-bottom: 1px solid var(--border); background: var(--bg2); }
+.day-badge { background: var(--mint); color: white; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; padding: 5px 12px; border-radius: 99px; text-transform: uppercase; }
+.day-title-text { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 600; color: var(--text); }
+.day-subtitle { font-size: 12px; color: var(--muted); margin-left: auto; }
 
-.free-day-content {}
-.free-day-summary { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-.free-day-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.day-card-body { padding: 16px 22px; display: flex; flex-direction: column; gap: 12px; }
 
-/* PAID CTA SECTION */
-.paid-cta-section {
-  background: linear-gradient(135deg, #f0fdf8 0%, #e8faf5 100%);
-  border: 2px solid var(--mint-mid);
-  border-radius: 20px; padding: 32px;
-  margin-bottom: 20px; text-align: center;
-  box-shadow: 0 4px 24px rgba(46,196,160,0.12);
-}
+.time-row { display: flex; align-items: flex-start; gap: 14px; }
+.time-chip { font-size: 10px; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; color: var(--muted2); background: var(--bg2); border: 1px solid var(--border); padding: 4px 10px; border-radius: 99px; white-space: nowrap; margin-top: 2px; flex-shrink: 0; }
+.time-content { flex: 1; }
+.time-place { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 3px; display: flex; align-items: center; gap: 6px; }
+.time-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+.place-badge { background: var(--mint-light); color: var(--mint-dark); font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 99px; }
 
-.paid-cta-icon { font-size: 36px; margin-bottom: 12px; }
+.day-divider { height: 1px; background: var(--border); margin: 4px 0; }
 
-.paid-cta-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px; font-weight: 600; color: var(--text);
-  margin-bottom: 8px; letter-spacing: -0.3px;
-}
+/* TEASER CARD */
+.teaser-card { background: var(--bg2); border: 1.5px dashed var(--mint-mid); border-radius: 14px; padding: 18px 22px; margin-bottom: 18px; text-align: center; }
+.teaser-text { font-size: 13px; color: var(--muted); line-height: 1.7; }
+.teaser-text strong { color: var(--mint-dark); }
 
-.paid-cta-sub { font-size: 14px; color: var(--muted); margin-bottom: 24px; line-height: 1.7; }
-
-.paid-features {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 10px; margin-bottom: 28px; text-align: left;
-}
-
-.paid-feat {
-  display: flex; align-items: flex-start; gap: 8px;
-  background: white; border-radius: 10px; padding: 12px 14px;
-  border: 1px solid var(--border);
-}
-.paid-feat-check { color: var(--mint); font-weight: 700; font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+/* PAID CTA */
+.paid-cta-section { background: linear-gradient(135deg, #f0fdf8 0%, #e8faf5 100%); border: 2px solid var(--mint-mid); border-radius: 20px; padding: 30px; margin-bottom: 18px; text-align: center; box-shadow: 0 4px 24px rgba(46,196,160,0.12); }
+.paid-cta-icon { font-size: 34px; margin-bottom: 10px; }
+.paid-cta-title { font-family: 'Playfair Display', serif; font-size: 21px; font-weight: 600; color: var(--text); margin-bottom: 8px; letter-spacing: -0.3px; }
+.paid-cta-sub { font-size: 14px; color: var(--muted); margin-bottom: 22px; line-height: 1.7; }
+.paid-features { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 24px; text-align: left; }
+.paid-feat { display: flex; align-items: flex-start; gap: 8px; background: white; border-radius: 10px; padding: 11px 13px; border: 1px solid var(--border); }
+.paid-feat-check { color: var(--mint); font-weight: 700; font-size: 13px; flex-shrink: 0; margin-top: 1px; }
 .paid-feat-text { font-size: 13px; color: var(--text); font-weight: 500; line-height: 1.4; }
+.cta-btn { display: inline-flex; align-items: center; gap: 10px; background: var(--mint); color: white; border: none; border-radius: 12px; padding: 15px 36px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 20px rgba(46,196,160,0.35); }
+.cta-btn:hover { background: var(--mint-dark); transform: translateY(-2px); }
+.price-row { margin-top: 12px; font-size: 13px; color: var(--muted); display: flex; align-items: center; justify-content: center; gap: 6px; }
+.price-row strong { color: var(--mint-dark); font-size: 19px; font-weight: 700; }
 
-.cta-btn {
-  display: inline-flex; align-items: center; gap: 10px;
-  background: var(--mint); color: white; border: none;
-  border-radius: 12px; padding: 16px 40px;
-  font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 600;
-  cursor: pointer; transition: all 0.2s;
-  box-shadow: 0 4px 20px rgba(46,196,160,0.35);
-}
-.cta-btn:hover { background: var(--mint-dark); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(46,196,160,0.4); }
+.disclaimer-box { background: #fffbf5; border: 1px solid #f0e8d8; border-left: 3px solid #f0a070; border-radius: 0 10px 10px 0; padding: 13px 16px; margin-bottom: 18px; display: flex; gap: 10px; align-items: flex-start; }
+.disclaimer-text { font-size: 12px; color: #8a6a50; line-height: 1.7; }
+.disclaimer-text strong { color: #7a5a40; }
 
-.price-row { margin-top: 14px; font-size: 13px; color: var(--muted); display: flex; align-items: center; justify-content: center; gap: 6px; }
-.price-row strong { color: var(--mint-dark); font-size: 20px; font-weight: 700; }
-
-.retry-btn {
-  display: block; margin: 0 auto 16px;
-  background: transparent; border: 1.5px solid var(--border);
-  color: var(--muted); border-radius: 10px; padding: 12px 28px;
-  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
-  cursor: pointer; transition: all 0.2s;
-}
+.retry-btn { display: block; margin: 0 auto 20px; background: transparent; border: 1.5px solid var(--border); color: var(--muted); border-radius: 10px; padding: 11px 26px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
 .retry-btn:hover { border-color: var(--mint); color: var(--mint); }
 
-.ad-bottom {
-  border-top: 1px solid var(--border); padding: 28px 24px;
-  text-align: center; font-size: 12px; color: var(--muted2);
-  min-height: 100px; display: flex; align-items: center;
-  justify-content: center; gap: 10px; background: var(--surface);
-}
+.ad-bottom { border-top: 1px solid var(--border); padding: 24px; text-align: center; font-size: 12px; color: var(--muted2); min-height: 90px; display: flex; align-items: center; justify-content: center; gap: 10px; background: var(--surface); }
+footer { border-top: 1px solid var(--border); padding: 20px 24px; text-align: center; font-size: 12px; color: var(--muted2); background: var(--surface); }
 
-footer { border-top: 1px solid var(--border); padding: 24px; text-align: center; font-size: 12px; color: var(--muted2); background: var(--surface); }
-
-/* ANIMS */
 @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 520px) {
-  header { padding: 16px 20px; }
+  header { padding: 14px 16px; }
   .card-grid.col3 { grid-template-columns: 1fr 1fr; }
-  .result-hero { flex-direction: column; align-items: flex-start; gap: 12px; }
-  .free-result-card, .paid-cta-section { padding: 24px 18px; }
+  .result-hero { flex-direction: column; align-items: flex-start; gap: 10px; }
   .paid-features { grid-template-columns: 1fr; }
-  .landing-features { gap: 16px; }
+  .landing-features { gap: 14px; }
+  .day-card-header { flex-wrap: wrap; }
+  .day-subtitle { margin-left: 0; }
 }
 </style>
 </head>
@@ -412,9 +251,11 @@ footer { border-top: 1px solid var(--border); padding: 24px; text-align: center;
 
 <header>
   <div class="logo">Journ<span>i</span>ro</div>
-  <div class="progress-wrap">
-    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-    <div class="progress-label" id="progressLabel"></div>
+  <div class="header-right">
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-label" id="progressLabel"></div>
+    </div>
   </div>
 </header>
 
@@ -427,10 +268,11 @@ footer { border-top: 1px solid var(--border); padding: 24px; text-align: center;
   <p class="landing-sub">5가지 질문만 답하면<br>AI가 나만을 위한 여행 일정을 즉시 만들어드려요</p>
   <button class="start-btn" onclick="goQuiz()">지금 시작하기 →</button>
   <p class="landing-note">무료 · 1분 이내 · 회원가입 불필요</p>
+  <button onclick="showPreview()" style="margin-top:12px; background:none; border:none; font-family:'DM Sans',sans-serif; font-size:13px; color:var(--muted2); cursor:pointer; text-decoration:underline; text-underline-offset:3px;">결과 미리보기 →</button>
   <div class="landing-features">
-    <div class="lf-item"><div class="lf-dot"></div> 국내·해외 모두 가능</div>
-    <div class="lf-item"><div class="lf-dot"></div> 완전 개인화 일정</div>
-    <div class="lf-item"><div class="lf-dot"></div> PDF 상세 가이드 990원</div>
+    <div class="lf-item"><div class="lf-dot"></div>국내·해외 모두 가능</div>
+    <div class="lf-item"><div class="lf-dot"></div>완전 개인화 일정</div>
+    <div class="lf-item"><div class="lf-dot"></div>PDF 상세 가이드 990원</div>
   </div>
 </div>
 
@@ -438,12 +280,12 @@ footer { border-top: 1px solid var(--border); padding: 24px; text-align: center;
 <div class="screen" id="screen-quiz">
   <div class="quiz-wrap">
 
-    <!-- STEP 1: 여행지 -->
+    <!-- STEP 1 -->
     <div class="quiz-step active" id="step-1">
       <div class="step-num">01 / 05</div>
       <div class="step-q">어디로 떠나고 싶으세요?</div>
       <div class="step-sub">국내, 해외 어디든 입력해보세요</div>
-      <input class="dest-input" id="destInput" type="text" placeholder="예: 도쿄, 제주도, 파리..." oninput="checkStep1()" />
+      <input class="dest-input" id="destInput" type="text" placeholder="예: 도쿄, 제주도, 파리..." oninput="checkStep1()"/>
       <div class="dest-chips">
         <span class="dest-chip" onclick="setDest('서울')">🇰🇷 서울</span>
         <span class="dest-chip" onclick="setDest('제주도')">🌊 제주도</span>
@@ -454,95 +296,105 @@ footer { border-top: 1px solid var(--border); padding: 24px; text-align: center;
         <span class="dest-chip" onclick="setDest('파리')">🇫🇷 파리</span>
         <span class="dest-chip" onclick="setDest('뉴욕')">🗽 뉴욕</span>
       </div>
-      <button class="next-btn" id="next-1" onclick="goStep(2)">다음 →</button>
+      <div class="btn-row">
+        <button class="back-btn hidden" id="back-1" onclick="goBack()">← 이전</button>
+        <button class="next-btn" id="next-1" onclick="goStep(2)">다음 →</button>
+      </div>
     </div>
 
-    <!-- STEP 2: 기간 -->
+    <!-- STEP 2 -->
     <div class="quiz-step" id="step-2">
       <div class="step-num">02 / 05</div>
       <div class="step-q">여행 기간은 얼마나 되나요?</div>
       <div class="step-sub">일정이 딱 맞게 구성돼요</div>
       <div class="duration-grid">
-        <div class="dur-card" onclick="selectDur(this, '당일치기')"><div class="dur-days">당일</div><div class="dur-label">당일치기</div></div>
-        <div class="dur-card" onclick="selectDur(this, '1박 2일')"><div class="dur-days">1박</div><div class="dur-label">1박 2일</div></div>
-        <div class="dur-card" onclick="selectDur(this, '2박 3일')"><div class="dur-days">2박</div><div class="dur-label">2박 3일</div></div>
-        <div class="dur-card" onclick="selectDur(this, '3박 4일')"><div class="dur-days">3박</div><div class="dur-label">3박 4일</div></div>
-        <div class="dur-card" onclick="selectDur(this, '4박 5일')"><div class="dur-days">4박</div><div class="dur-label">4박 5일</div></div>
-        <div class="dur-card" onclick="selectDur(this, '일주일 이상')"><div class="dur-days">7박+</div><div class="dur-label">일주일+</div></div>
+        <div class="dur-card" onclick="selectDur(this,'당일치기')"><div class="dur-days">당일</div><div class="dur-label">당일치기</div></div>
+        <div class="dur-card" onclick="selectDur(this,'1박 2일')"><div class="dur-days">1박</div><div class="dur-label">1박 2일</div></div>
+        <div class="dur-card" onclick="selectDur(this,'2박 3일')"><div class="dur-days">2박</div><div class="dur-label">2박 3일</div></div>
+        <div class="dur-card" onclick="selectDur(this,'3박 4일')"><div class="dur-days">3박</div><div class="dur-label">3박 4일</div></div>
+        <div class="dur-card" onclick="selectDur(this,'4박 5일')"><div class="dur-days">4박</div><div class="dur-label">4박 5일</div></div>
+        <div class="dur-card" onclick="selectDur(this,'일주일 이상')"><div class="dur-days">7박+</div><div class="dur-label">일주일+</div></div>
       </div>
-      <button class="next-btn" id="next-2" onclick="goStep(3)">다음 →</button>
+      <div class="btn-row">
+        <button class="back-btn" id="back-2" onclick="goBack()">← 이전</button>
+        <button class="next-btn" id="next-2" onclick="goStep(3)">다음 →</button>
+      </div>
     </div>
 
-    <!-- STEP 3: 동행인 -->
+    <!-- STEP 3 -->
     <div class="quiz-step" id="step-3">
       <div class="step-num">03 / 05</div>
       <div class="step-q">누구랑 여행하세요?</div>
       <div class="step-sub">동행에 맞게 일정을 조정해드려요</div>
       <div class="card-grid">
-        <div class="option-card" onclick="selectCompanion(this, '친구')">
-          <div class="card-emoji">🧑‍🤝‍🧑</div>
-          <div class="card-title">친구</div>
-          <div class="card-desc">함께 즐기는 자유로운 여행</div>
+        <div class="option-card" onclick="selectCompanion(this,'친구')">
+          <div class="card-emoji">🧑‍🤝‍🧑</div><div class="card-title">친구</div><div class="card-desc">함께 즐기는 자유로운 여행</div>
         </div>
-        <div class="option-card" onclick="selectCompanion(this, '연인')">
-          <div class="card-emoji">💑</div>
-          <div class="card-title">연인</div>
-          <div class="card-desc">둘만의 특별한 시간</div>
+        <div class="option-card" onclick="selectCompanion(this,'연인')">
+          <div class="card-emoji">💑</div><div class="card-title">연인</div><div class="card-desc">둘만의 특별한 시간</div>
         </div>
-        <div class="option-card" onclick="selectCompanion(this, '가족')">
-          <div class="card-emoji">👨‍👩‍👧</div>
-          <div class="card-title">가족</div>
-          <div class="card-desc">모두가 즐거운 가족 여행</div>
+        <div class="option-card" onclick="selectCompanion(this,'가족')">
+          <div class="card-emoji">👨‍👩‍👧</div><div class="card-title">가족</div><div class="card-desc">모두가 즐거운 가족 여행</div>
         </div>
-        <div class="option-card" onclick="selectCompanion(this, '혼자')">
-          <div class="card-emoji">🧳</div>
-          <div class="card-title">혼자</div>
-          <div class="card-desc">나만의 자유로운 솔로 여행</div>
+        <div class="option-card" onclick="selectCompanion(this,'혼자')">
+          <div class="card-emoji">🧳</div><div class="card-title">혼자</div><div class="card-desc">나만의 자유로운 솔로 여행</div>
         </div>
       </div>
 
-      <div class="companion-extras" id="companionExtras">
+      <div class="companion-extras">
         <div class="extras-label">추가 선택 (해당되면 골라주세요)</div>
         <div class="extra-checks">
           <label class="extra-check">
             <input type="checkbox" id="check-elder" onchange="updateExtras()">
             <div class="check-box">✓</div>
-            <div>
-              <div class="check-label">🧓 노약자가 있어요</div>
-              <div class="check-sub">이동이 편한 동선으로 구성해드려요</div>
-            </div>
+            <div><div class="check-label">🧓 노약자가 있어요</div><div class="check-sub">이동이 편한 동선으로 구성해드려요</div></div>
           </label>
           <label class="extra-check">
-            <input type="checkbox" id="check-child" onchange="updateExtras()">
+            <input type="checkbox" id="check-child" onchange="toggleChildOption()">
+            <div class="check-box">✓</div>
+            <div><div class="check-label">👶 아이가 있어요</div><div class="check-sub">아이 친화적인 장소 위주로 구성해드려요</div></div>
+          </label>
+        </div>
+
+        <!-- 노키즈존 서브옵션 -->
+        <div class="nokids-option" id="nokidsOption">
+          <label class="extra-check">
+            <input type="checkbox" id="check-nokids" onchange="updateExtras()">
             <div class="check-box">✓</div>
             <div>
-              <div class="check-label">👶 아이가 있어요</div>
-              <div class="check-sub">아이 친화적인 장소 위주로 구성해드려요</div>
+              <div class="check-label">🚫 노키즈존 제외하기</div>
+              <div class="check-sub">아이 입장 가능한 식당·카페만 추천해드려요</div>
             </div>
           </label>
         </div>
       </div>
 
-      <button class="next-btn" id="next-3" onclick="goStep(4)">다음 →</button>
+      <div class="btn-row">
+        <button class="back-btn" id="back-3" onclick="goBack()">← 이전</button>
+        <button class="next-btn" id="next-3" onclick="goStep(4)">다음 →</button>
+      </div>
     </div>
 
-    <!-- STEP 4: 테마 -->
+    <!-- STEP 4 -->
     <div class="quiz-step" id="step-4">
       <div class="step-num">04 / 05</div>
       <div class="step-q">이번 여행의 테마는요?</div>
       <div class="step-sub">여러 개 골라도 돼요</div>
       <div class="card-grid col3">
-        <div class="option-card multi" onclick="toggleMulti(this, '맛집 탐방')"><div class="card-emoji">🍜</div><div class="card-title">맛집</div></div>
-        <div class="option-card multi" onclick="toggleMulti(this, '문화·역사')"><div class="card-emoji">🏛️</div><div class="card-title">문화</div></div>
-        <div class="option-card multi" onclick="toggleMulti(this, '쇼핑')"><div class="card-emoji">🛍️</div><div class="card-title">쇼핑</div></div>
-        <div class="option-card multi" onclick="toggleMulti(this, '자연·힐링')"><div class="card-emoji">🌿</div><div class="card-title">힐링</div></div>
-        <div class="option-card multi" onclick="toggleMulti(this, '액티비티')"><div class="card-emoji">🎯</div><div class="card-title">액티비티</div></div>
-        <div class="option-card multi" onclick="toggleMulti(this, '카페 투어')"><div class="card-emoji">☕</div><div class="card-title">카페</div></div>
+        <div class="option-card multi" onclick="toggleMulti(this,'맛집 탐방')"><div class="card-emoji">🍜</div><div class="card-title">맛집</div></div>
+        <div class="option-card multi" onclick="toggleMulti(this,'문화·역사')"><div class="card-emoji">🏛️</div><div class="card-title">문화</div></div>
+        <div class="option-card multi" onclick="toggleMulti(this,'쇼핑')"><div class="card-emoji">🛍️</div><div class="card-title">쇼핑</div></div>
+        <div class="option-card multi" onclick="toggleMulti(this,'자연·힐링')"><div class="card-emoji">🌿</div><div class="card-title">힐링</div></div>
+        <div class="option-card multi" onclick="toggleMulti(this,'액티비티')"><div class="card-emoji">🎯</div><div class="card-title">액티비티</div></div>
+        <div class="option-card multi" onclick="toggleMulti(this,'카페 투어')"><div class="card-emoji">☕</div><div class="card-title">카페</div></div>
       </div>
-      <button class="next-btn enabled" id="next-4" onclick="goStep(5)">다음 →</button>
+      <div class="btn-row">
+        <button class="back-btn" id="back-4" onclick="goBack()">← 이전</button>
+        <button class="next-btn enabled" id="next-4" onclick="goStep(5)">다음 →</button>
+      </div>
     </div>
 
-    <!-- STEP 5: 날짜 -->
+    <!-- STEP 5 -->
     <div class="quiz-step" id="step-5">
       <div class="step-num">05 / 05</div>
       <div class="step-q">언제 떠나세요?</div>
@@ -550,32 +402,21 @@ footer { border-top: 1px solid var(--border); padding: 24px; text-align: center;
       <div class="date-options">
         <div class="date-opt" id="dateOpt-undecided" onclick="selectDateOpt('미정')">
           <div class="date-opt-icon">🗓️</div>
-          <div class="date-opt-text">
-            <div class="date-opt-title">아직 미정이에요</div>
-            <div class="date-opt-sub">언제든 떠날 수 있는 일정으로 구성해드려요</div>
-          </div>
+          <div><div class="date-opt-title">아직 미정이에요</div><div class="date-opt-sub">언제든 떠날 수 있는 일정으로 구성해드려요</div></div>
         </div>
         <div class="date-opt" id="dateOpt-specific" onclick="selectDateOpt('날짜입력')">
           <div class="date-opt-icon">📅</div>
-          <div class="date-opt-text">
-            <div class="date-opt-title">날짜를 정했어요</div>
-            <div class="date-opt-sub">시즌별 행사·날씨·팁을 반영해드려요</div>
-          </div>
+          <div><div class="date-opt-title">날짜를 정했어요</div><div class="date-opt-sub">시즌별 행사·날씨·팁을 반영해드려요</div></div>
         </div>
       </div>
-
       <div class="date-input-wrap" id="dateInputWrap">
-        <div style="flex:1">
-          <div class="date-label">출발일</div>
-          <input class="date-input" type="date" id="dateStart" onchange="checkDateInput()">
-        </div>
-        <div style="flex:1">
-          <div class="date-label">귀국일</div>
-          <input class="date-input" type="date" id="dateEnd" onchange="checkDateInput()">
-        </div>
+        <div class="date-field"><div class="date-label">출발일</div><input class="date-input" type="date" id="dateStart" onchange="checkDateInput()"></div>
+        <div class="date-field"><div class="date-label">귀국일</div><input class="date-input" type="date" id="dateEnd" onchange="checkDateInput()"></div>
       </div>
-
-      <button class="next-btn" id="next-5" onclick="generatePlan()">✦ 일정 생성하기</button>
+      <div class="btn-row">
+        <button class="back-btn" id="back-5" onclick="goBack()">← 이전</button>
+        <button class="next-btn" id="next-5" onclick="generatePlan()">✦ 일정 생성하기</button>
+      </div>
     </div>
 
   </div>
@@ -583,10 +424,7 @@ footer { border-top: 1px solid var(--border); padding: 24px; text-align: center;
 
 <!-- LOADING -->
 <div class="screen" id="screen-loading">
-  <div class="loading-ring-wrap">
-    <div class="loading-ring"></div>
-    <div class="loading-ring2"></div>
-  </div>
+  <div class="loading-ring-wrap"><div class="loading-ring"></div><div class="loading-ring2"></div></div>
   <div class="loading-title" id="loadingTitle">일정을 만들고 있어요</div>
   <div class="loading-steps">
     <div class="load-step" id="ls1">⏳ 여행 스타일 분석 중...</div>
@@ -607,29 +445,25 @@ footer { border-top: 1px solid var(--border); padding: 24px; text-align: center;
       <span class="free-badge">무료 요약</span>
     </div>
 
-    <!-- AD TOP -->
-    <div class="ad-block">
-      <span class="ad-tag">광고</span>
-      구글 애드센스 배너 (결과 상단 · 반응형)
+    <div class="ad-block"><span class="ad-tag">광고</span>구글 애드센스 배너 (결과 상단 · 반응형)</div>
+
+    <div class="result-intro">
+      <div class="result-intro-icon">✨</div>
+      <div class="result-intro-text" id="resultIntro">AI가 맞춤 일정을 생성했어요.</div>
     </div>
 
-    <!-- 무료: 간단 요약 -->
-    <div class="free-result-card">
-      <div class="free-result-title">📋 일정 요약 <span style="font-size:12px; color:var(--muted); font-family:'DM Sans',sans-serif; font-weight:400;">(무료 미리보기)</span></div>
-      <div id="freeSummary"></div>
+    <div class="day-cards" id="dayCards"></div>
+
+    <div class="teaser-card">
+      <div class="teaser-text">📎 <strong>Day 3 이후 일정</strong>은 상세 가이드에서 확인하세요<br>식당 예약 팁 · 교통편 · 숙소 추천 · 예산표 포함</div>
     </div>
 
-    <!-- AD MIDDLE -->
-    <div class="ad-block">
-      <span class="ad-tag">광고</span>
-      구글 애드센스 중간 배너 (반응형)
-    </div>
+    <div class="ad-block"><span class="ad-tag">광고</span>구글 애드센스 중간 배너 (반응형)</div>
 
-    <!-- 유료 CTA -->
     <div class="paid-cta-section">
       <div class="paid-cta-icon">📖</div>
       <div class="paid-cta-title">상세 여행 가이드 받기</div>
-      <div class="paid-cta-sub">식당 예약 방법부터 이동 동선, 숨은 맛집까지<br>인쇄 가능한 PDF로 완벽하게 준비하세요</div>
+      <div class="paid-cta-sub">식당 예약부터 동선, 숨은 맛집까지<br>인쇄 가능한 PDF로 완벽하게 준비하세요</div>
       <div class="paid-features">
         <div class="paid-feat"><div class="paid-feat-check">✓</div><div class="paid-feat-text">시간대별 상세 동선</div></div>
         <div class="paid-feat"><div class="paid-feat-check">✓</div><div class="paid-feat-text">식당 예약 링크 & 팁</div></div>
@@ -642,35 +476,29 @@ footer { border-top: 1px solid var(--border); padding: 24px; text-align: center;
       <div class="price-row">단 <strong>990원</strong> · 결제 즉시 다운로드</div>
     </div>
 
-    <!-- DISCLAIMER -->
-    <div style="background:#fffbf5; border:1px solid #f0e8d8; border-left:3px solid #f0a070; border-radius:0 10px 10px 0; padding:14px 18px; margin-bottom:20px; display:flex; gap:10px; align-items:flex-start;">
-      <span style="font-size:15px; flex-shrink:0;">⚠️</span>
-      <p style="font-size:12px; color:#8a6a50; line-height:1.7;">본 일정은 AI가 생성한 <strong style="color:#7a5a40">참고용 정보</strong>입니다. 실제 영업시간, 가격, 예약 가능 여부 등은 여행 전 반드시 직접 확인하시기 바랍니다. Journiro는 정보의 정확성에 대해 책임을 지지 않으며, 이로 인한 불이익의 책임은 이용자 본인에게 있습니다.</p>
+    <div class="disclaimer-box">
+      <span style="font-size:15px;flex-shrink:0;">⚠️</span>
+      <p class="disclaimer-text">본 일정은 AI가 생성한 <strong>참고용 정보</strong>입니다. 실제 영업시간, 가격, 예약 가능 여부 등은 여행 전 반드시 직접 확인하시기 바랍니다. Journiro는 정보의 정확성에 대해 책임을 지지 않으며, 이로 인한 불이익의 책임은 이용자 본인에게 있습니다.</p>
     </div>
 
-    <div style="text-align:center; padding-bottom:24px;">
+    <div style="text-align:center;padding-bottom:24px;">
       <button class="retry-btn" onclick="restart()">↩ 다시 만들기</button>
     </div>
   </div>
 
-  <div class="ad-bottom">
-    <span class="ad-tag">광고</span>
-    구글 애드센스 하단 배너 (반응형)
-  </div>
-
+  <div class="ad-bottom"><span class="ad-tag">광고</span>구글 애드센스 하단 배너 (반응형)</div>
   <footer>© 2026 Journiro · AI Travel Planner · hello@journiro.com</footer>
 </div>
 
 <script>
-const state = {
-  destination: '', duration: '', companion: '',
-  extras: [], themes: [], dateType: '', dateStart: '', dateEnd: ''
-};
+const state = { destination:'', duration:'', companion:'', extras:[], themes:[], dateType:'', dateStart:'', dateEnd:'' };
+let currentStep = 0;
 
 function updateProgress(step) {
   const pct = step === 0 ? 0 : (step / 5) * 100;
   document.getElementById('progressFill').style.width = pct + '%';
   document.getElementById('progressLabel').textContent = step > 0 ? `${step} / 5` : '';
+  currentStep = step;
 }
 
 function showScreen(id) {
@@ -686,6 +514,15 @@ function goStep(n) {
   document.getElementById(`step-${n}`).classList.add('active');
   updateProgress(n);
   window.scrollTo(0, 0);
+}
+
+function goBack() {
+  if (currentStep <= 1) {
+    showScreen('screen-landing');
+    updateProgress(0);
+  } else {
+    goStep(currentStep - 1);
+  }
 }
 
 // STEP 1
@@ -714,10 +551,18 @@ function selectCompanion(el, val) {
   state.companion = val;
   document.getElementById('next-3').classList.add('enabled');
 }
+
+function toggleChildOption() {
+  const checked = document.getElementById('check-child').checked;
+  document.getElementById('nokidsOption').classList.toggle('visible', checked);
+  updateExtras();
+}
+
 function updateExtras() {
   state.extras = [];
   if (document.getElementById('check-elder').checked) state.extras.push('노약자 동반');
   if (document.getElementById('check-child').checked) state.extras.push('어린 아이 동반');
+  if (document.getElementById('check-nokids').checked) state.extras.push('노키즈존 제외');
 }
 
 // STEP 4
@@ -747,7 +592,7 @@ function checkDateInput() {
   document.getElementById('next-5').classList.toggle('enabled', !!(state.dateStart && state.dateEnd));
 }
 
-// LOADING
+// LOADING ANIM
 async function animateLoading() {
   const steps = ['ls1','ls2','ls3'];
   const done = ['✅ 여행 스타일 분석 완료','✅ 동선 최적화 완료','✅ 맛집 & 명소 큐레이션 완료'];
@@ -770,38 +615,50 @@ async function generatePlan() {
   const themeStr = state.themes.length > 0 ? state.themes.join(', ') : '자유 여행';
   const extrasStr = state.extras.length > 0 ? state.extras.join(', ') : '없음';
   const dateStr = state.dateType === '미정' ? '미정' : `${state.dateStart} ~ ${state.dateEnd}`;
+  const nokids = state.extras.includes('노키즈존 제외');
 
-  const prompt = `당신은 친절한 여행 플래너입니다.
+  const prompt = `당신은 친절한 여행 플래너입니다. 아래 정보를 바탕으로 개인화된 여행 일정 요약을 JSON으로만 반환하세요. 다른 텍스트는 절대 포함하지 마세요.
 
 여행 정보:
 - 여행지: ${state.destination}
 - 기간: ${state.duration}
 - 동행: ${state.companion}${extrasStr !== '없음' ? ` (${extrasStr})` : ''}
 - 테마: ${themeStr}
-- 여행 날짜: ${dateStr}
+- 날짜: ${dateStr}
+${nokids ? '- 노키즈존은 반드시 제외하고 아이 입장 가능한 곳만 추천' : ''}
 
-아래 형식으로 무료 요약 일정을 작성해주세요.
-
-형식:
-한 줄 감성 소개 (이탤릭 느낌으로)
-
-Day 1 - [지역명]
-• 오전: [장소명] — 한 줄 설명
-• 오후: [장소명] — 한 줄 설명
-• 저녁: [장소명] — 한 줄 설명
-
-Day 2 - [지역명]
-• 오전: [장소명] — 한 줄 설명
-• (이후 일정은 생략)
-
-(전체 일정의 Day 1~2만 작성, 나머지는 생략)
+반환 형식 (JSON만, 마크다운 없이):
+{
+  "intro": "이 여행을 한 문장으로 감성적으로 표현",
+  "days": [
+    {
+      "day": "Day 1",
+      "area": "지역명",
+      "theme": "이날의 테마 키워드 (예: 감성 카페 & 쇼핑)",
+      "slots": [
+        { "time": "오전", "emoji": "☀️", "place": "장소명", "desc": "1~2줄 설명", "tag": "카테고리" },
+        { "time": "오후", "emoji": "🏛️", "place": "장소명", "desc": "1~2줄 설명", "tag": "카테고리" },
+        { "time": "저녁", "emoji": "🍜", "place": "장소명", "desc": "1~2줄 설명", "tag": "카테고리" }
+      ]
+    },
+    {
+      "day": "Day 2",
+      "area": "지역명",
+      "theme": "이날의 테마 키워드",
+      "slots": [
+        { "time": "오전", "emoji": "☕", "place": "장소명", "desc": "1~2줄 설명", "tag": "카테고리" },
+        { "time": "오후", "emoji": "🌿", "place": "장소명", "desc": "1~2줄 설명", "tag": "카테고리" },
+        { "time": "저녁", "emoji": "🍣", "place": "장소명", "desc": "1~2줄 설명", "tag": "카테고리" }
+      ]
+    }
+  ]
+}
 
 규칙:
-- 동행자(${state.companion})와 특이사항(${extrasStr})에 맞게 조정
-- ${state.dateType !== '미정' ? `${state.dateStart} 출발 기준 시즌 특성 반영` : ''}
-- 구체적인 실제 장소명 포함
-- 500자 이내, 한국어로
-- 마지막 줄: "✂️ 상세 가이드에는 Day 3 이후 일정 + 예약 팁 + 예산표가 포함돼 있어요"`;
+- 반드시 Day 1, Day 2만 작성 (나머지는 유료)
+- 구체적인 실제 장소명 사용
+- 동행자(${state.companion})와 특이사항에 맞게 조정
+- JSON만 반환, 절대 다른 텍스트 포함 금지`;
 
   try {
     const res = await fetch("/.netlify/functions/generate-plan", {
@@ -825,52 +682,12 @@ Day 2 - [지역명]
       throw new Error(data.error || '일정 생성 실패');
     }
 
-    const text = data.text || '일정 생성에 실패했습니다.';
+    const plan = data.plan || {};
 
     await new Promise(r => setTimeout(r, 400));
 
-    // 결과 세팅
-    document.getElementById('resultDest').textContent = `${state.destination} · ${state.duration}`;
-    const tagsEl = document.getElementById('resultTags');
-    tagsEl.innerHTML = '';
-    [state.companion, ...state.extras, ...state.themes.slice(0, 2)].filter(Boolean).forEach(t => {
-      const span = document.createElement('span');
-      span.className = 'rtag';
-      span.textContent = t;
-      tagsEl.appendChild(span);
-    });
-
-    // 무료 요약 렌더링
-    const summaryEl = document.getElementById('freeSummary');
-    summaryEl.innerHTML = '';
-    const lines = text.split('\n').filter(l => l.trim());
-    lines.forEach((line, i) => {
-      const div = document.createElement('div');
-      if (i === 0) {
-        div.style.cssText = 'font-style:italic; color:var(--muted); font-size:14px; margin-bottom:16px; line-height:1.7; padding:12px 16px; background:var(--bg2); border-radius:8px;';
-        div.textContent = line;
-      } else if (line.startsWith('Day')) {
-        div.style.cssText = 'display:flex; align-items:center; gap:10px; padding:14px 0 8px; border-top:1px solid var(--border); margin-top:4px;';
-        const badge = document.createElement('span');
-        badge.style.cssText = 'background:var(--mint); color:white; font-size:10px; font-weight:700; letter-spacing:1px; padding:4px 10px; border-radius:99px; white-space:nowrap;';
-        badge.textContent = line.split(' - ')[0];
-        const title = document.createElement('span');
-        title.style.cssText = 'font-size:15px; font-weight:600; color:var(--text);';
-        title.textContent = line.split(' - ')[1] || '';
-        div.appendChild(badge);
-        div.appendChild(title);
-      } else if (line.startsWith('•')) {
-        div.style.cssText = 'font-size:13px; color:var(--text); line-height:1.8; padding:3px 0 3px 8px;';
-        div.textContent = line;
-      } else if (line.startsWith('✂️')) {
-        div.style.cssText = 'font-size:12px; color:var(--mint-dark); margin-top:16px; padding:10px 14px; background:var(--mint-light); border-radius:8px; font-weight:500;';
-        div.textContent = line;
-      } else {
-        div.style.cssText = 'font-size:13px; color:var(--muted); line-height:1.7; padding:2px 0;';
-        div.textContent = line;
-      }
-      summaryEl.appendChild(div);
-    });
+    const tags = [state.companion, ...state.extras.filter(e => e !== '노키즈존 제외'), ...state.themes.slice(0,2)];
+    renderResult(plan, state.destination, state.duration, tags);
 
     showScreen('screen-result');
     updateProgress(5);
@@ -881,6 +698,74 @@ Day 2 - [지역명]
   }
 }
 
+// 결과 렌더링 공통 함수
+function renderResult(plan, dest, duration, tags) {
+  document.getElementById('resultDest').textContent = `${dest} · ${duration}`;
+  const tagsEl = document.getElementById('resultTags');
+  tagsEl.innerHTML = '';
+  tags.filter(Boolean).forEach(t => {
+    const span = document.createElement('span');
+    span.className = 'rtag';
+    span.textContent = t;
+    tagsEl.appendChild(span);
+  });
+  document.getElementById('resultIntro').textContent = plan.intro || '';
+  const dayCardsEl = document.getElementById('dayCards');
+  dayCardsEl.innerHTML = '';
+  (plan.days || []).forEach(day => {
+    const card = document.createElement('div');
+    card.className = 'day-card';
+    card.innerHTML = `
+      <div class="day-card-header">
+        <span class="day-badge">${day.day}</span>
+        <span class="day-title-text">${day.area || ''}</span>
+        <span class="day-subtitle">${day.theme || ''}</span>
+      </div>
+      <div class="day-card-body">
+        ${(day.slots || []).map((slot, i) => `
+          ${i > 0 ? '<div class="day-divider"></div>' : ''}
+          <div class="time-row">
+            <span class="time-chip">${slot.time}</span>
+            <div class="time-content">
+              <div class="time-place">${slot.emoji || ''} ${slot.place} <span class="place-badge">${slot.tag || ''}</span></div>
+              <div class="time-desc">${slot.desc}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    dayCardsEl.appendChild(card);
+  });
+}
+
+// 샘플 미리보기
+function showPreview() {
+  const sample = {
+    intro: "도쿄의 골목골목을 느리게 걸으며, 일상 속에 스며드는 여행 ✨",
+    days: [
+      {
+        day: "Day 1", area: "시부야 & 다이칸야마", theme: "감성 카페 & 쇼핑",
+        slots: [
+          { time: "오전", emoji: "☕", place: "Fuglen Tokyo", tag: "카페", desc: "노르웨이 감성의 브런치 카페. 플랫화이트와 에그베네딕트로 여유로운 시작." },
+          { time: "오후", emoji: "📚", place: "다이칸야마 T-Site", tag: "쇼핑", desc: "세계에서 가장 아름다운 서점. 츠타야와 빈티지 숍이 이어진 골목 산책." },
+          { time: "저녁", emoji: "🍣", place: "스시 사이토 시부야점", tag: "맛집", desc: "현지인 추천 오마카세 스시. 1인 8,000엔대, 3일 전 예약 필수." }
+        ]
+      },
+      {
+        day: "Day 2", area: "하라주쿠 & 신주쿠", theme: "로컬 골목 탐방",
+        slots: [
+          { time: "오전", emoji: "🌿", place: "메이지 신궁", tag: "문화", desc: "고요한 숲 속 신사. 이른 아침 방문 시 관광객 없이 여유롭게 산책 가능." },
+          { time: "오후", emoji: "🛍️", place: "우라하라주쿠", tag: "쇼핑", desc: "관광객이 잘 모르는 뒷골목. 빈티지 의류와 독립 편집숍이 가득." },
+          { time: "저녁", emoji: "🍜", place: "이치란 라멘 신주쿠점", tag: "맛집", desc: "1인 칸막이 좌석의 진한 돈코츠 라멘. 줄이 길어도 회전율이 빠름." }
+        ]
+      }
+    ]
+  };
+  renderResult(sample, '도쿄', '3박 4일', ['연인', '카페 투어', '맛집 탐방']);
+  showScreen('screen-result');
+  updateProgress(5);
+}
+
 function restart() {
   Object.assign(state, { destination:'', duration:'', companion:'', extras:[], themes:[], dateType:'', dateStart:'', dateEnd:'' });
   document.getElementById('destInput').value = '';
@@ -889,8 +774,10 @@ function restart() {
   document.getElementById('next-4').classList.add('enabled');
   document.getElementById('check-elder').checked = false;
   document.getElementById('check-child').checked = false;
+  document.getElementById('check-nokids').checked = false;
+  document.getElementById('nokidsOption').classList.remove('visible');
   document.getElementById('dateInputWrap').classList.remove('visible');
-  ['ls1','ls2','ls3'].forEach((id, i) => {
+  ['ls1','ls2','ls3'].forEach((id,i) => {
     const el = document.getElementById(id);
     el.textContent = ['⏳ 여행 스타일 분석 중...','⏳ 동선 최적화 중...','⏳ 맛집 & 명소 큐레이션 중...'][i];
     el.classList.remove('done');
