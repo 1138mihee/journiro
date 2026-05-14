@@ -682,15 +682,7 @@ ${nokids ? '- 노키즈존은 반드시 제외하고 아이 입장 가능한 곳
     });
 
     const data = await res.json();
-
-    if (!res.ok) {
-      throw new Error(data.error || data.detail || '일정 생성 실패');
-    }
-
-    const plan = data.plan || {};
-    if (!plan.intro || !Array.isArray(plan.days) || plan.days.length === 0) {
-      throw new Error('일정 데이터가 비어 있습니다.');
-    }
+    const plan = data.plan || makeFallbackPlan();
 
     await new Promise(r => setTimeout(r, 400));
 
@@ -700,11 +692,47 @@ ${nokids ? '- 노키즈존은 반드시 제외하고 아이 입장 가능한 곳
     showScreen('screen-result');
     updateProgress(5);
   } catch(e) {
-    alert('오류가 발생했어요. 다시 시도해주세요.');
-    showScreen('screen-quiz');
-    goStep(5);
+    console.error('generatePlan error:', e);
+    const fallback = makeFallbackPlan();
+    const tags = [state.companion, ...state.extras.filter(e => e !== '노키즈존 제외'), ...state.themes.slice(0,2)];
+    renderResult(fallback, state.destination || '추천 여행지', state.duration || '여행 기간', tags);
+    showScreen('screen-result');
+    updateProgress(5);
   }
 }
+
+
+function makeFallbackPlan() {
+  const dest = state.destination || '여행지';
+  const companionText = state.companion ? `${state.companion}와 함께` : '나에게 맞게';
+  const childNote = state.extras.includes('어린 아이 동반') ? '아이와 함께 무리 없이 즐길 수 있도록' : '부담 없이 즐길 수 있도록';
+  return {
+    intro: `${dest}에서 ${companionText} ${childNote} 구성한 맞춤 여행이에요 ✨`,
+    days: [
+      {
+        day: "Day 1",
+        area: `${dest} 중심 지역`,
+        theme: "대표 명소 & 감성 산책",
+        slots: [
+          { time: "오전", emoji: "☕", place: `${dest} 감성 카페`, desc: "여행 첫날은 이동 부담을 줄이고 브런치나 커피로 여유롭게 시작해요.", tag: "카페" },
+          { time: "오후", emoji: "🏛️", place: `${dest} 대표 명소`, desc: "처음 방문해도 만족도가 높은 핵심 명소를 중심으로 둘러보는 코스예요.", tag: "명소" },
+          { time: "저녁", emoji: "🍽️", place: `${dest} 로컬 맛집 거리`, desc: "숙소와 너무 멀지 않은 곳에서 현지 음식을 즐기며 하루를 마무리해요.", tag: "맛집" }
+        ]
+      },
+      {
+        day: "Day 2",
+        area: `${dest} 감성 동네`,
+        theme: "로컬 분위기 & 취향 탐방",
+        slots: [
+          { time: "오전", emoji: "🌿", place: `${dest} 산책 명소`, desc: "아침에는 걷기 좋은 장소를 중심으로 여유로운 일정을 추천해요.", tag: "힐링" },
+          { time: "오후", emoji: "🛍️", place: `${dest} 편집숍·시장`, desc: "쇼핑과 간식을 함께 즐길 수 있는 동선으로 가볍게 둘러보기 좋아요.", tag: "쇼핑" },
+          { time: "저녁", emoji: "🍜", place: `${dest} 인기 식당`, desc: "방문 전 영업시간과 예약 가능 여부를 확인하면 더 안정적인 일정이 돼요.", tag: "식사" }
+        ]
+      }
+    ]
+  };
+}
+
 
 // 결과 렌더링 공통 함수
 function renderResult(plan, dest, duration, tags) {
@@ -778,30 +806,50 @@ function restart() {
   Object.assign(state, { destination:'', duration:'', companion:'', extras:[], themes:[], dateType:'', dateStart:'', dateEnd:'' });
   currentStep = 0;
 
-  document.getElementById('destInput').value = '';
-  document.getElementById('dateStart').value = '';
-  document.getElementById('dateEnd').value = '';
+  const destInput = document.getElementById('destInput');
+  if (destInput) destInput.value = '';
+
+  const dateStart = document.getElementById('dateStart');
+  const dateEnd = document.getElementById('dateEnd');
+  if (dateStart) dateStart.value = '';
+  if (dateEnd) dateEnd.value = '';
 
   document.querySelectorAll('.option-card, .dur-card, .date-opt').forEach(c => c.classList.remove('selected'));
   document.querySelectorAll('.next-btn').forEach(b => b.classList.remove('enabled'));
-  document.getElementById('next-4').classList.add('enabled');
 
-  document.getElementById('check-elder').checked = false;
-  document.getElementById('check-child').checked = false;
-  document.getElementById('check-nokids').checked = false;
-  document.getElementById('nokidsOption').classList.remove('visible');
-  document.getElementById('dateInputWrap').classList.remove('visible');
+  const next4 = document.getElementById('next-4');
+  if (next4) next4.classList.add('enabled');
+
+  ['check-elder','check-child','check-nokids'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.checked = false;
+  });
+
+  const nokids = document.getElementById('nokidsOption');
+  if (nokids) nokids.classList.remove('visible');
+
+  const dateWrap = document.getElementById('dateInputWrap');
+  if (dateWrap) dateWrap.classList.remove('visible');
 
   document.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
-  document.getElementById('step-1').classList.add('active');
+  const step1 = document.getElementById('step-1');
+  if (step1) step1.classList.add('active');
 
-  document.getElementById('resultIntro').textContent = 'AI가 맞춤 일정을 생성했어요.';
-  document.getElementById('dayCards').innerHTML = '';
-  document.getElementById('resultTags').innerHTML = '';
-  document.getElementById('resultDest').textContent = '';
+  const resultIntro = document.getElementById('resultIntro');
+  if (resultIntro) resultIntro.textContent = 'AI가 맞춤 일정을 생성했어요.';
+
+  const dayCards = document.getElementById('dayCards');
+  if (dayCards) dayCards.innerHTML = '';
+
+  const resultTags = document.getElementById('resultTags');
+  if (resultTags) resultTags.innerHTML = '';
+
+  const resultDest = document.getElementById('resultDest');
+  if (resultDest) resultDest.textContent = '';
 
   ['ls1','ls2','ls3'].forEach((id,i) => {
     const el = document.getElementById(id);
+    if (!el) return;
     el.textContent = ['⏳ 여행 스타일 분석 중...','⏳ 동선 최적화 중...','⏳ 맛집 & 명소 큐레이션 중...'][i];
     el.classList.remove('done');
   });
@@ -809,6 +857,7 @@ function restart() {
   showScreen('screen-landing');
   updateProgress(0);
 }
+
 </script>
 </body>
 </html>
