@@ -507,7 +507,12 @@ function showScreen(id) {
   window.scrollTo(0, 0);
 }
 
-function goQuiz() { showScreen('screen-quiz'); updateProgress(1); }
+function goQuiz() {
+  document.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step-1').classList.add('active');
+  showScreen('screen-quiz');
+  updateProgress(1);
+}
 
 function goStep(n) {
   document.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
@@ -679,10 +684,13 @@ ${nokids ? '- 노키즈존은 반드시 제외하고 아이 입장 가능한 곳
     const data = await res.json();
 
     if (!res.ok) {
-      throw new Error(data.error || '일정 생성 실패');
+      throw new Error(data.error || data.detail || '일정 생성 실패');
     }
 
     const plan = data.plan || {};
+    if (!plan.intro || !Array.isArray(plan.days) || plan.days.length === 0) {
+      throw new Error('일정 데이터가 비어 있습니다.');
+    }
 
     await new Promise(r => setTimeout(r, 400));
 
@@ -768,20 +776,36 @@ function showPreview() {
 
 function restart() {
   Object.assign(state, { destination:'', duration:'', companion:'', extras:[], themes:[], dateType:'', dateStart:'', dateEnd:'' });
+  currentStep = 0;
+
   document.getElementById('destInput').value = '';
+  document.getElementById('dateStart').value = '';
+  document.getElementById('dateEnd').value = '';
+
   document.querySelectorAll('.option-card, .dur-card, .date-opt').forEach(c => c.classList.remove('selected'));
   document.querySelectorAll('.next-btn').forEach(b => b.classList.remove('enabled'));
   document.getElementById('next-4').classList.add('enabled');
+
   document.getElementById('check-elder').checked = false;
   document.getElementById('check-child').checked = false;
   document.getElementById('check-nokids').checked = false;
   document.getElementById('nokidsOption').classList.remove('visible');
   document.getElementById('dateInputWrap').classList.remove('visible');
+
+  document.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step-1').classList.add('active');
+
+  document.getElementById('resultIntro').textContent = 'AI가 맞춤 일정을 생성했어요.';
+  document.getElementById('dayCards').innerHTML = '';
+  document.getElementById('resultTags').innerHTML = '';
+  document.getElementById('resultDest').textContent = '';
+
   ['ls1','ls2','ls3'].forEach((id,i) => {
     const el = document.getElementById(id);
     el.textContent = ['⏳ 여행 스타일 분석 중...','⏳ 동선 최적화 중...','⏳ 맛집 & 명소 큐레이션 중...'][i];
     el.classList.remove('done');
   });
+
   showScreen('screen-landing');
   updateProgress(0);
 }
