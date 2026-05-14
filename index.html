@@ -698,7 +698,7 @@ ${nokids ? '- 노키즈존은 반드시 제외하고 아이 입장 가능한 곳
     updateProgress(5);
   } catch(e) {
     console.error('generatePlan error:', e);
-    alert('구체적인 일정 생성에 실패했어요. 잠시 후 다시 시도해주세요.');
+    alert('일정 생성에 실패했어요. 잠시 후 다시 시도해주세요.');
     showScreen('screen-quiz');
     goStep(5);
   }
