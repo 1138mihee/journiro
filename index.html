@@ -454,8 +454,8 @@ footer { border-top: 1px solid var(--border); padding: 20px 24px; text-align: ce
 
     <div class="day-cards" id="dayCards"></div>
 
-    <div class="teaser-card">
-      <div class="teaser-text">📎 <strong>Day 3 이후 일정</strong>은 상세 가이드에서 확인하세요<br>식당 예약 팁 · 교통편 · 숙소 추천 · 예산표 포함</div>
+    <div class="teaser-card" id="teaserCard">
+      <div class="teaser-text" id="teaserText">📎 <strong>나머지 일정</strong>은 상세 가이드에서 확인하세요<br>식당 예약 팁 · 교통편 · 숙소 추천 · 예산표 포함</div>
     </div>
 
     <div class="ad-block"><span class="ad-tag">광고</span>구글 애드센스 중간 배너 (반응형)</div>
@@ -698,10 +698,24 @@ ${nokids ? '- 노키즈존은 반드시 제외하고 아이 입장 가능한 곳
     updateProgress(5);
   } catch(e) {
     console.error('generatePlan error:', e);
-    alert('일시적으로 일정 생성에 실패했습니다. 잠시 후 다시 시도해주세요.');
+    alert('일정 생성에 실패했어요. 잠시 후 다시 시도해주세요.');
     showScreen('screen-quiz');
     goStep(5);
   }
+}
+
+// 기간에 따라 무료로 보여줄 day/slot 수 결정
+function getFreeLimit(duration) {
+  if (duration === '당일치기') return { days: 1, slots: 1 }; // Day1 오전만
+  if (duration === '1박 2일') return { days: 1, slots: 3 };  // Day1 전체
+  return { days: 2, slots: 3 };                              // Day1+Day2 전체 (3일 이상)
+}
+
+// teaser 문구 결정
+function getTeaserText(duration) {
+  if (duration === '당일치기') return '📎 <strong>오후 이후 일정</strong>은 상세 가이드에서 확인하세요<br>이동 동선 · 맛집 예약 팁 · 예산표 포함';
+  if (duration === '1박 2일') return '📎 <strong>Day 2 일정</strong>은 상세 가이드에서 확인하세요<br>식당 예약 팁 · 교통편 · 숙소 추천 · 예산표 포함';
+  return '📎 <strong>Day 3 이후 일정</strong>은 상세 가이드에서 확인하세요<br>식당 예약 팁 · 교통편 · 숙소 추천 · 예산표 포함';
 }
 
 // 결과 렌더링 공통 함수
@@ -716,9 +730,16 @@ function renderResult(plan, dest, duration, tags) {
     tagsEl.appendChild(span);
   });
   document.getElementById('resultIntro').textContent = plan.intro || '';
+
+  const { days: freeDays, slots: freeSlots } = getFreeLimit(duration);
   const dayCardsEl = document.getElementById('dayCards');
   dayCardsEl.innerHTML = '';
-  (plan.days || []).forEach(day => {
+
+  (plan.days || []).forEach((day, dayIdx) => {
+    if (dayIdx >= freeDays) return; // 무료 범위 초과 day는 렌더링 안 함
+
+    const visibleSlots = day.slots?.slice(0, freeSlots) || [];
+
     const card = document.createElement('div');
     card.className = 'day-card';
     card.innerHTML = `
@@ -728,7 +749,7 @@ function renderResult(plan, dest, duration, tags) {
         <span class="day-subtitle">${day.theme || ''}</span>
       </div>
       <div class="day-card-body">
-        ${(day.slots || []).map((slot, i) => `
+        ${visibleSlots.map((slot, i) => `
           ${i > 0 ? '<div class="day-divider"></div>' : ''}
           <div class="time-row">
             <span class="time-chip">${slot.time}</span>
@@ -742,6 +763,9 @@ function renderResult(plan, dest, duration, tags) {
     `;
     dayCardsEl.appendChild(card);
   });
+
+  // teaser 문구 업데이트
+  document.getElementById('teaserText').innerHTML = getTeaserText(duration);
 }
 
 // 샘플 미리보기
