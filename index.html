@@ -472,7 +472,7 @@ footer { border-top: 1px solid var(--border); padding: 20px 24px; text-align: ce
         <div class="paid-feat"><div class="paid-feat-check">✓</div><div class="paid-feat-text">숨은 현지 맛집</div></div>
         <div class="paid-feat"><div class="paid-feat-check">✓</div><div class="paid-feat-text">숙소 추천 & 팁</div></div>
       </div>
-      <button class="cta-btn" onclick="alert('결제 연동 준비 중!')">📄 PDF 가이드 받기</button>
+      <button class="cta-btn" onclick="location.href='journiro-pdf.html'">📄 PDF 가이드 미리보기</button>
       <div class="price-row">단 <strong>990원</strong> · 결제 즉시 다운로드</div>
     </div>
 
@@ -693,6 +693,22 @@ ${nokids ? '- 노키즈존은 반드시 제외하고 아이 입장 가능한 곳
 
     const tags = [state.companion, ...state.extras.filter(e => e !== '노키즈존 제외'), ...state.themes.slice(0,2)];
     renderResult(plan, state.destination, state.duration, tags);
+
+    // PDF 페이지에서 실제 선택값/생성 결과를 사용할 수 있도록 저장
+    const pdfPayload = {
+      destination: state.destination,
+      duration: state.duration,
+      companion: state.companion,
+      extras: state.extras,
+      themes: state.themes,
+      dateType: state.dateType,
+      dateStart: state.dateStart,
+      dateEnd: state.dateEnd,
+      intro: plan.intro || '',
+      days: plan.days || [],
+      createdAt: new Date().toISOString()
+    };
+    localStorage.setItem('journiroPdfData', JSON.stringify(pdfPayload));
 
     showScreen('screen-result');
     updateProgress(5);
