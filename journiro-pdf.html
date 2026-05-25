@@ -2,516 +2,215 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>Journiro PDF Generator</title>
+<title>Journiro 맞춤 PDF 가이드</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Noto+Sans+KR:wght@300;400;500;700&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'Noto Sans KR', sans-serif;
-  background: #e8e4dc;
-  padding: 32px 20px;
-  display: flex; flex-direction: column; align-items: center; gap: 20px;
-}
-
-.controls {
-  display: flex; gap: 12px; align-items: center;
-  background: white; padding: 16px 24px; border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-}
-
-.dl-btn {
-  background: #2ec4a0; color: white; border: none; border-radius: 10px;
-  padding: 12px 28px; font-family: 'Noto Sans KR', sans-serif;
-  font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s;
-  box-shadow: 0 4px 16px rgba(46,196,160,0.3);
-}
-.dl-btn:hover { background: #1ea085; transform: translateY(-1px); }
-.dl-btn:disabled { background: #aaa; cursor: not-allowed; transform: none; }
-
-.preview-label { font-size: 12px; color: #888; letter-spacing: 1px; text-transform: uppercase; font-family: 'Noto Sans KR', sans-serif; }
-
-/* ── PDF PAGE ── */
-#pdf-content {
-  width: 210mm;
-  background: #faf7f0;
-  box-shadow: 0 8px 48px rgba(0,0,0,0.15);
-  position: relative;
-  overflow: hidden;
-}
-
-/* BG DECORATIONS */
-.bg-blob1 { position: absolute; top: -80px; right: -80px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(46,196,160,0.07) 0%, transparent 65%); border-radius: 50%; pointer-events: none; }
-.bg-blob2 { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: radial-gradient(circle, #d4c9b0 1px, transparent 1px); background-size: 22px 22px; opacity: 0.2; pointer-events: none; }
-
-/* ── COVER ── */
-.cover {
-  position: relative;
-  padding: 52px 52px 40px;
-  border-bottom: 2px solid #e2d9c8;
-  background: linear-gradient(135deg, #faf7f0 0%, #f5f0e8 100%);
-}
-
-.cover-logo { font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 400; color: #2ec4a0; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 28px; }
-
-.cover-destination {
-  font-family: 'Playfair Display', serif;
-  font-size: 48px; font-weight: 600; color: #1a1a15;
-  line-height: 1.1; letter-spacing: -1px; margin-bottom: 6px;
-}
-.cover-duration {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px; font-weight: 400; font-style: italic;
-  color: #2ec4a0; margin-bottom: 10px; letter-spacing: 0.5px;
-}
-.cover-subtitle {
-  font-family: 'Noto Sans KR', sans-serif;
-  font-size: 13px; font-weight: 500; color: #8a7d65;
-  letter-spacing: 2px; text-transform: uppercase;
-  margin-bottom: 24px;
-}
-
-.cover-meta { display: flex; flex-wrap: wrap; gap: 18px; margin-bottom: 24px; }
-.cover-meta-item { display: flex; align-items: center; gap: 7px; }
-.cover-dot { width: 6px; height: 6px; background: #2ec4a0; border-radius: 50%; flex-shrink: 0; }
-.cover-meta-text { font-size: 12px; color: #7a6d55; font-weight: 500; }
-
-.cover-intro { background: rgba(46,196,160,0.06); border-left: 3px solid #2ec4a0; border-radius: 0 10px 10px 0; padding: 14px 18px; }
-.cover-intro-text { font-family: 'Nanum Pen Script', cursive; font-size: 18px; color: #3d5a52; line-height: 1.8; }
-
-/* ── LANDMARK VISUAL ── */
-.landmark-card {
-  margin: 22px 0 20px;
-  height: 150px;
-  border-radius: 18px;
-  overflow: hidden;
-  position: relative;
-  background: linear-gradient(135deg, #dff8f2 0%, #f7efe0 100%);
-  border: 1px solid #e2d9c8;
-  box-shadow: inset 0 -30px 60px rgba(46,196,160,0.08);
-}
-.landmark-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle, rgba(255,255,255,0.75) 1px, transparent 1px);
-  background-size: 18px 18px;
-  opacity: 0.35;
-}
-.landmark-sky {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 18% 20%, rgba(255,255,255,0.95) 0 10px, transparent 11px),
-              radial-gradient(circle at 76% 28%, rgba(255,255,255,0.75) 0 16px, transparent 17px);
-}
-.landmark-emoji {
-  position: absolute;
-  right: 28px;
-  bottom: 16px;
-  font-size: 76px;
-  line-height: 1;
-  filter: drop-shadow(0 8px 18px rgba(0,0,0,0.12));
-}
-.landmark-title {
-  position: absolute;
-  left: 24px;
-  bottom: 42px;
-  font-family: 'Playfair Display', serif;
-  font-size: 24px;
-  font-weight: 600;
-  color: #1a1a15;
-  letter-spacing: -0.4px;
-}
-.landmark-sub {
-  position: absolute;
-  left: 24px;
-  bottom: 22px;
-  font-size: 11px;
-  font-weight: 600;
-  color: #7a6d55;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-}
-.landmark-wave {
-  position: absolute;
-  left: -10%;
-  right: -10%;
-  bottom: -18px;
-  height: 58px;
-  background: rgba(46,196,160,0.14);
-  border-radius: 50% 50% 0 0;
-}
-.landmark-card.tokyo { background: linear-gradient(135deg, #f5efe6 0%, #ffe4df 100%); }
-.landmark-card.seoul { background: linear-gradient(135deg, #eaf5ff 0%, #f6efe2 100%); }
-.landmark-card.busan { background: linear-gradient(135deg, #dff7ff 0%, #e8faf5 100%); }
-.landmark-card.jeju { background: linear-gradient(135deg, #e8faf5 0%, #f5f0e8 100%); }
-.landmark-card.osaka { background: linear-gradient(135deg, #fff2df 0%, #f7e7ff 100%); }
-.landmark-card.bangkok { background: linear-gradient(135deg, #fff4d8 0%, #ffe8c8 100%); }
-
-/* ── SECTION HEADER ── */
-.section-header {
-  display: flex; align-items: center; gap: 12px;
-  padding: 22px 52px 14px;
-  margin-top: 8px;
-}
-.section-badge { background: #2ec4a0; color: white; font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 4px 12px; border-radius: 99px; white-space: nowrap; }
-.section-title { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 600; color: #1a1a15; letter-spacing: -0.3px; }
-.section-line { flex: 1; height: 1px; background: #e2d9c8; }
-
-/* ── DAY BLOCK ── */
-.day-block { padding: 0 52px 24px; }
-
-.day-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid #e2d9c8; }
-.day-num { background: #2ec4a0; color: white; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; padding: 5px 14px; border-radius: 99px; }
-.day-area { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 600; color: #1a1a15; }
-.day-theme { font-size: 11px; color: #2ec4a0; font-weight: 600; margin-left: auto; background: rgba(46,196,160,0.08); padding: 3px 10px; border-radius: 99px; }
-
-/* SLOT CARDS */
-.slot-cards { display: flex; flex-direction: column; gap: 10px; }
-
-.slot-card { background: white; border: 1px solid #ede7d9; border-radius: 12px; overflow: hidden; }
-
-.slot-card-top { display: flex; align-items: flex-start; gap: 14px; padding: 14px 16px 10px; }
-.slot-time { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #b5a98a; background: #f5f0e8; border: 1px solid #ede7d9; padding: 3px 9px; border-radius: 99px; white-space: nowrap; margin-top: 2px; flex-shrink: 0; }
-.slot-main { flex: 1; }
-.slot-place-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-.slot-emoji { font-size: 16px; }
-.slot-place { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 600; color: #1a1a15; }
-.slot-tag { background: rgba(46,196,160,0.1); color: #1ea085; font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
-.slot-address { font-size: 10px; color: #9a8e78; margin-bottom: 5px; display: flex; align-items: center; gap: 3px; }
-.slot-desc { font-size: 11px; color: #6a5f4a; line-height: 1.6; margin-bottom: 6px; }
-.slot-why { font-size: 10px; color: #2ec4a0; font-weight: 600; background: rgba(46,196,160,0.05); padding: 4px 10px; border-radius: 6px; display: inline-block; }
-
-.slot-card-bottom { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 16px 12px; border-top: 1px dashed #ede7d9; background: #fdfbf7; }
-
-.info-chip { display: flex; align-items: center; gap: 5px; font-size: 10px; padding: 3px 10px; border-radius: 99px; font-weight: 500; }
-.chip-wait { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
-.chip-nowait { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
-.chip-nokids { background: #fce4ec; color: #c62828; border: 1px solid #f8bbd0; }
-.chip-kids { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
-.chip-reserve { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
-.chip-noreserve { background: #f5f5f5; color: #616161; border: 1px solid #e0e0e0; }
-
-.slot-move { display: flex; align-items: center; gap: 6px; padding: 6px 16px; background: #f5f0e8; border-top: 1px solid #ede7d9; font-size: 10px; color: #7a6d55; }
-.move-icon { color: #2ec4a0; font-weight: 700; }
-
-/* ── INFO SECTIONS ── */
-.info-section { padding: 0 52px 24px; }
-
-.info-box { background: white; border: 1px solid #ede7d9; border-radius: 12px; padding: 18px 20px; }
-.info-box + .info-box { margin-top: 10px; }
-
-.info-box-title { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: #1a1a15; margin-bottom: 10px; letter-spacing: 0.3px; }
-.info-box-icon { font-size: 16px; }
-
-.info-row { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; border-bottom: 1px solid #f0ebe0; font-size: 11px; color: #5a5040; line-height: 1.5; }
-.info-row:last-child { border-bottom: none; padding-bottom: 0; }
-.info-row-label { font-weight: 600; color: #1a1a15; min-width: 80px; flex-shrink: 0; }
-.info-row-val { flex: 1; }
-
-/* RAIN COURSE */
-.rain-cards { display: flex; flex-direction: column; gap: 8px; }
-.rain-card { background: #f0f7ff; border: 1px solid #cce0ff; border-radius: 10px; padding: 12px 16px; display: flex; gap: 12px; align-items: flex-start; }
-.rain-icon { font-size: 20px; flex-shrink: 0; }
-.rain-place { font-size: 13px; font-weight: 600; color: #1a1a15; margin-bottom: 3px; }
-.rain-desc { font-size: 11px; color: #5a6a7a; line-height: 1.5; }
-
-/* KIDS TIPS */
-.kids-tips { display: flex; flex-direction: column; gap: 7px; }
-.kids-tip-row { display: flex; align-items: flex-start; gap: 10px; font-size: 11px; color: #5a5040; line-height: 1.5; padding: 7px 0; border-bottom: 1px solid #f0ebe0; }
-.kids-tip-row:last-child { border-bottom: none; }
-.kids-tip-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
-
-/* BUDGET TABLE */
-.budget-table { width: 100%; border-collapse: collapse; }
-.budget-table th { background: #f5f0e8; font-size: 10px; font-weight: 700; color: #7a6d55; letter-spacing: 0.5px; padding: 8px 12px; text-align: left; border-bottom: 1.5px solid #e2d9c8; }
-.budget-table td { padding: 9px 12px; font-size: 11px; color: #5a5040; border-bottom: 1px solid #f0ebe0; }
-.budget-table tr:last-child td { border-bottom: none; }
-.budget-table td.amount { text-align: right; font-weight: 600; color: #2ec4a0; }
-.budget-total-row { background: rgba(46,196,160,0.06); }
-.budget-total-row td { font-size: 13px; font-weight: 700; color: #1a1a15; padding: 11px 12px; }
-.budget-total-row td.amount { color: #2ec4a0; font-size: 16px; }
-
-/* LOCAL TIP */
-.local-tip { background: linear-gradient(135deg, #fff8ee, #fdf4e0); border: 1px solid #e8d9b8; border-radius: 12px; padding: 16px 20px; display: flex; gap: 12px; align-items: flex-start; }
-.local-tip-icon { font-size: 24px; flex-shrink: 0; }
-.local-tip-label { font-size: 10px; font-weight: 700; color: #8a6d3b; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
-.local-tip-text { font-family: 'Nanum Pen Script', cursive; font-size: 18px; color: #5a4a28; line-height: 1.8; }
-
-/* CHECKLIST */
-.checklist { display: flex; flex-direction: column; gap: 6px; }
-.check-item { display: flex; align-items: flex-start; gap: 10px; font-size: 11px; color: #5a5040; padding: 6px 0; border-bottom: 1px solid #f0ebe0; line-height: 1.5; }
-.check-item:last-child { border-bottom: none; }
-.check-box-icon { width: 14px; height: 14px; border: 1.5px solid #2ec4a0; border-radius: 3px; flex-shrink: 0; margin-top: 1px; }
-
-/* DISCLAIMER */
-.disclaimer { margin: 0 52px 40px; background: #fff8f0; border: 1px solid #f0e0c0; border-left: 3px solid #f0a070; border-radius: 0 8px 8px 0; padding: 12px 16px; display: flex; gap: 10px; align-items: flex-start; }
-.disclaimer-text { font-size: 11px; color: #8a6a50; line-height: 1.8; font-weight: 500; }
-.disclaimer-text strong { color: #7a5a40; background: #fff0c2; padding: 1px 4px; border-radius: 4px; font-weight: 800; }
-
-/* FOOTER */
-.pdf-footer { padding: 18px 52px; border-top: 1px solid #e2d9c8; display: flex; justify-content: space-between; align-items: center; background: #f5f0e8; }
-.footer-logo { font-family: 'Playfair Display', serif; font-size: 12px; color: #b5a98a; letter-spacing: 1px; }
-.footer-note { font-family: 'Nanum Pen Script', cursive; font-size: 16px; color: #b5a98a; }
-.footer-url { font-size: 10px; color: #c8bca4; }
-
-/* DIVIDER */
-.page-divider { height: 1px; background: linear-gradient(90deg, #2ec4a0, transparent); margin: 0 52px 0; opacity: 0.3; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:#e8e4dc;padding:32px 20px;display:flex;flex-direction:column;align-items:center;gap:20px;color:#1a1a15}
+.controls{display:flex;gap:12px;align-items:center;background:white;padding:16px 24px;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.preview-label{font-size:12px;color:#888;letter-spacing:1px;text-transform:uppercase}
+.dl-btn{background:#2ec4a0;color:white;border:0;border-radius:10px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(46,196,160,.3)}
+#pdf-content{width:210mm;background:#faf7f0;box-shadow:0 8px 48px rgba(0,0,0,.15);position:relative;overflow:hidden}
+.bg-blob1{position:absolute;top:-80px;right:-80px;width:300px;height:300px;background:radial-gradient(circle,rgba(46,196,160,.07) 0%,transparent 65%);border-radius:50%}
+.bg-blob2{position:absolute;inset:0;background-image:radial-gradient(circle,#d4c9b0 1px,transparent 1px);background-size:22px 22px;opacity:.2}
+.cover{position:relative;padding:52px 52px 40px;border-bottom:2px solid #e2d9c8;background:linear-gradient(135deg,#faf7f0 0%,#f5f0e8 100%)}
+.cover-logo{font-family:'Playfair Display',serif;font-size:13px;color:#2ec4a0;letter-spacing:3px;text-transform:uppercase;margin-bottom:28px}
+.cover-destination{font-family:'Playfair Display',serif;font-size:48px;font-weight:600;line-height:1.1;letter-spacing:-1px;margin-bottom:6px}
+.cover-duration{font-family:'Playfair Display',serif;font-size:22px;font-style:italic;color:#2ec4a0;margin-bottom:10px}
+.cover-subtitle{font-size:13px;font-weight:500;color:#8a7d65;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px}
+.cover-meta{display:flex;flex-wrap:wrap;gap:18px;margin-bottom:22px}
+.cover-meta-item{display:flex;align-items:center;gap:7px}
+.cover-dot{width:6px;height:6px;background:#2ec4a0;border-radius:50%}
+.cover-meta-text{font-size:12px;color:#7a6d55;font-weight:500}
+.landmark-card{margin:22px 0 20px;height:150px;border-radius:18px;overflow:hidden;position:relative;border:1px solid #e2d9c8;box-shadow:inset 0 -30px 60px rgba(46,196,160,.08)}
+.landmark-card::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.75) 1px,transparent 1px);background-size:18px 18px;opacity:.35}
+.landmark-wave{position:absolute;left:-10%;right:-10%;bottom:-18px;height:58px;background:rgba(46,196,160,.14);border-radius:50% 50% 0 0}
+.landmark-title{position:absolute;left:24px;bottom:42px;font-family:'Playfair Display',serif;font-size:24px;font-weight:600}
+.landmark-sub{position:absolute;left:24px;bottom:22px;font-size:11px;font-weight:700;color:#7a6d55;letter-spacing:1.2px;text-transform:uppercase}
+.landmark-emoji{position:absolute;right:28px;bottom:16px;font-size:76px;line-height:1;filter:drop-shadow(0 8px 18px rgba(0,0,0,.12))}
+.landmark-card.tokyo{background:linear-gradient(135deg,#f5efe6 0%,#ffe4df 100%)}
+.landmark-card.bangkok{background:linear-gradient(135deg,#fff4d8 0%,#ffe8c8 100%)}
+.landmark-card.busan{background:linear-gradient(135deg,#dff7ff 0%,#e8faf5 100%)}
+.landmark-card.jeju{background:linear-gradient(135deg,#e8faf5 0%,#f5f0e8 100%)}
+.landmark-card.seoul{background:linear-gradient(135deg,#eaf5ff 0%,#f6efe2 100%)}
+.landmark-card.osaka{background:linear-gradient(135deg,#fff2df 0%,#f7e7ff 100%)}
+.cover-intro{background:rgba(46,196,160,.06);border-left:3px solid #2ec4a0;border-radius:0 10px 10px 0;padding:14px 18px}
+.cover-intro-text{font-family:'Nanum Pen Script',cursive;font-size:18px;color:#3d5a52;line-height:1.8}
+.section-header{display:flex;align-items:center;gap:12px;padding:22px 52px 14px;margin-top:8px;position:relative}
+.section-badge{background:#2ec4a0;color:white;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 12px;border-radius:99px;white-space:nowrap}
+.section-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;letter-spacing:-.3px}
+.section-line{flex:1;height:1px;background:#e2d9c8}
+.page-divider{height:1px;background:linear-gradient(90deg,#2ec4a0,transparent);margin:0 52px;opacity:.3}
+.day-block{padding:0 52px 24px;position:relative}
+.day-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid #e2d9c8}
+.day-num{background:#2ec4a0;color:white;font-size:10px;font-weight:700;letter-spacing:1.5px;padding:5px 14px;border-radius:99px}
+.day-area{font-family:'Playfair Display',serif;font-size:16px;font-weight:600}
+.day-theme{font-size:11px;color:#2ec4a0;font-weight:700;margin-left:auto;background:rgba(46,196,160,.08);padding:3px 10px;border-radius:99px}
+.slot-cards{display:flex;flex-direction:column;gap:10px}
+.slot-card{background:white;border:1px solid #ede7d9;border-radius:12px;overflow:hidden}
+.slot-card-top{display:flex;align-items:flex-start;gap:14px;padding:14px 16px 10px}
+.slot-time{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#b5a98a;background:#f5f0e8;border:1px solid #ede7d9;padding:3px 9px;border-radius:99px;white-space:nowrap;margin-top:2px}
+.slot-main{flex:1}
+.slot-place-row{display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap}
+.slot-emoji{font-size:16px}
+.slot-place{font-family:'Playfair Display',serif;font-size:14px;font-weight:600}
+.slot-tag{background:rgba(46,196,160,.1);color:#1ea085;font-size:9px;font-weight:700;padding:2px 8px;border-radius:99px}
+.slot-address{font-size:10px;color:#9a8e78;margin-bottom:5px}
+.slot-desc{font-size:11px;color:#6a5f4a;line-height:1.6;margin-bottom:6px}
+.slot-why{font-size:10px;color:#2ec4a0;font-weight:600;background:rgba(46,196,160,.05);padding:4px 10px;border-radius:6px;display:inline-block;line-height:1.5}
+.slot-card-bottom{display:flex;flex-wrap:wrap;gap:6px;padding:8px 16px 12px;border-top:1px dashed #ede7d9;background:#fdfbf7}
+.info-chip{font-size:10px;padding:3px 10px;border-radius:99px;font-weight:500}
+.chip-wait{background:#fff3e0;color:#e65100;border:1px solid #ffe0b2}
+.chip-nowait,.chip-kids{background:#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9}
+.chip-reserve{background:#e3f2fd;color:#1565c0;border:1px solid #bbdefb}
+.chip-noreserve{background:#f5f5f5;color:#616161;border:1px solid #e0e0e0}
+.slot-move{padding:6px 16px;background:#f5f0e8;border-top:1px solid #ede7d9;font-size:10px;color:#7a6d55}
+.info-section{padding:0 52px 24px;position:relative}
+.info-box{background:white;border:1px solid #ede7d9;border-radius:12px;padding:18px 20px}
+.info-row{display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid #f0ebe0;font-size:11px;color:#5a5040;line-height:1.5}
+.info-row:last-child{border-bottom:0;padding-bottom:0}
+.info-row-label{font-weight:700;color:#1a1a15;min-width:98px;flex-shrink:0}
+.info-row-val{flex:1}
+.rain-cards{display:flex;flex-direction:column;gap:8px}
+.rain-card{background:#f0f7ff;border:1px solid #cce0ff;border-radius:10px;padding:12px 16px;display:flex;gap:12px;align-items:flex-start}
+.rain-icon{font-size:20px}
+.rain-place{font-size:13px;font-weight:700;margin-bottom:3px}
+.rain-desc{font-size:11px;color:#5a6a7a;line-height:1.5}
+.budget-table{width:100%;border-collapse:collapse}
+.budget-table th{background:#f5f0e8;font-size:10px;font-weight:700;color:#7a6d55;letter-spacing:.5px;padding:8px 12px;text-align:left;border-bottom:1.5px solid #e2d9c8}
+.budget-table td{padding:9px 12px;font-size:11px;color:#5a5040;border-bottom:1px solid #f0ebe0}
+.budget-table td.amount{text-align:right;font-weight:700;color:#2ec4a0}
+.budget-total-row{background:rgba(46,196,160,.06)}
+.budget-total-row td{font-size:13px;font-weight:700;color:#1a1a15;padding:11px 12px}
+.budget-total-row td.amount{color:#2ec4a0;font-size:16px}
+.kids-tips{display:flex;flex-direction:column;gap:7px}
+.kids-tip-row{display:flex;align-items:flex-start;gap:10px;font-size:11px;color:#5a5040;line-height:1.5;padding:7px 0;border-bottom:1px solid #f0ebe0}
+.kids-tip-row:last-child{border-bottom:0}
+.kids-tip-icon{font-size:14px;flex-shrink:0;margin-top:1px}
+.local-tip{background:linear-gradient(135deg,#fff8ee,#fdf4e0);border:1px solid #e8d9b8;border-radius:12px;padding:16px 20px;display:flex;gap:12px;align-items:flex-start}
+.local-tip-icon{font-size:24px}
+.local-tip-label{font-size:10px;font-weight:700;color:#8a6d3b;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+.local-tip-text{font-family:'Nanum Pen Script',cursive;font-size:18px;color:#5a4a28;line-height:1.8}
+.checklist{display:flex;flex-direction:column;gap:6px}
+.check-item{display:flex;align-items:flex-start;gap:10px;font-size:11px;color:#5a5040;padding:6px 0;border-bottom:1px solid #f0ebe0;line-height:1.5}
+.check-box-icon{width:14px;height:14px;border:1.5px solid #2ec4a0;border-radius:3px;flex-shrink:0;margin-top:1px}
+.disclaimer{margin:0 52px 40px;background:#fff8f0;border:1px solid #f0e0c0;border-left:3px solid #f0a070;border-radius:0 8px 8px 0;padding:12px 16px;display:flex;gap:10px;align-items:flex-start}
+.disclaimer-text{font-size:11px;color:#8a6a50;line-height:1.8;font-weight:500}
+.disclaimer-text strong{color:#7a5a40;background:#fff0c2;padding:1px 4px;border-radius:4px;font-weight:800}
+.pdf-footer{padding:18px 52px;border-top:1px solid #e2d9c8;display:flex;justify-content:space-between;align-items:center;background:#f5f0e8}
+.footer-logo{font-family:'Playfair Display',serif;font-size:12px;color:#b5a98a;letter-spacing:1px}
+.footer-note{font-family:'Nanum Pen Script',cursive;font-size:16px;color:#b5a98a}
+.footer-url{font-size:10px;color:#c8bca4}
 </style>
 </head>
 <body>
-
-<div class="controls">
-  <span class="preview-label">PDF 미리보기</span>
-  <button class="dl-btn" id="dlBtn" onclick="downloadPDF()">⬇ PDF 다운로드</button>
-</div>
-
+<div class="controls"><span class="preview-label">PDF 미리보기</span><button class="dl-btn" id="dlBtn" onclick="downloadPDF()">⬇ PDF 다운로드</button></div>
 <div id="pdf-content">
-  <div class="bg-blob1"></div>
-  <div class="bg-blob2"></div>
-
-  <!-- ① COVER -->
+  <div class="bg-blob1"></div><div class="bg-blob2"></div>
   <div class="cover">
     <div class="cover-logo">Journiro · AI Travel Guide</div>
-    <div class="cover-destination" id="coverDestination">부산</div>
-    <div class="cover-duration" id="coverDuration">2박 3일</div>
+    <div class="cover-destination" id="coverDestination"></div>
+    <div class="cover-duration" id="coverDuration"></div>
     <div class="cover-subtitle">나만을 위한 맞춤 여행 가이드</div>
-    <div class="cover-meta" id="coverMeta">
-      <div class="cover-meta-item"><div class="cover-dot"></div><div class="cover-meta-text">2인 여행 · 연인</div></div>
-      <div class="cover-meta-item"><div class="cover-dot"></div><div class="cover-meta-text">맛집 + 카페 테마</div></div>
-      <div class="cover-meta-item"><div class="cover-dot"></div><div class="cover-meta-text">날짜 미정</div></div>
-    </div>
-
-    <div class="landmark-card busan" id="landmarkCard">
-      <div class="landmark-sky"></div>
+    <div class="cover-meta" id="coverMeta"></div>
+    <div class="landmark-card tokyo" id="landmarkCard">
       <div class="landmark-wave"></div>
-      <div class="landmark-title" id="landmarkTitle">Gwangandaegyo Bridge</div>
-      <div class="landmark-sub" id="landmarkSub">Signature Landmark</div>
-      <div class="landmark-emoji" id="landmarkEmoji">🌉</div>
+      <div class="landmark-title" id="landmarkTitle"></div>
+      <div class="landmark-sub" id="landmarkSub"></div>
+      <div class="landmark-emoji" id="landmarkEmoji"></div>
     </div>
-
-    <div class="cover-intro">
-      <div class="cover-intro-text" id="coverIntro">"파도 소리를 들으며 느리게 걷는 제주, 서로의 손을 꼭 잡고 골목골목을 누비는 두 사람의 이야기 ✨"</div>
-    </div>
+    <div class="cover-intro"><div class="cover-intro-text" id="coverIntro"></div></div>
   </div>
-
   <div class="page-divider"></div>
-
-  <!-- ② DAY SCHEDULES -->
   <div id="daySchedules"></div>
 
-  <!-- ③ 비 오는 날 대체 코스 -->
-  <div class="section-header">
-    <span class="section-badge">TIP</span>
-    <span class="section-title">🌧 비 오는 날 대체 코스</span>
-    <div class="section-line"></div>
-  </div>
-  <div class="info-section">
-    <div class="rain-cards" id="rainCourses">
-      <div class="rain-card"><div class="rain-icon">🎨</div><div><div class="rain-place">제주도립미술관</div><div class="rain-desc">제주 작가들의 작품을 감상할 수 있는 실내 미술관. 비 오는 날 오전 방문 시 한산해요.</div></div></div>
-      <div class="rain-card"><div class="rain-icon">🛍️</div><div><div class="rain-place">이마트 제주점 / 동문재래시장</div><div class="rain-desc">지역 특산품 쇼핑. 한라봉, 흑돼지 가공식품 등 기념품 구매에 좋아요.</div></div></div>
-      <div class="rain-card"><div class="rain-icon">☕</div><div><div class="rain-place">감성 실내 카페 투어</div><div class="rain-desc">애월 또는 한림 지역 대형 실내 카페. 창밖으로 비 내리는 제주 바다를 바라보며 여유롭게.</div></div></div>
-    </div>
-  </div>
+  <div class="section-header"><span class="section-badge">ROUTE</span><span class="section-title">🚗 시간대별 상세 동선 & 교통 팁</span><div class="section-line"></div></div>
+  <div class="info-section"><div class="info-box" id="transportTips"></div></div>
 
-  <!-- ④ 예산 계획표 -->
-  <div class="section-header">
-    <span class="section-badge">BUDGET</span>
-    <span class="section-title">💰 예상 예산 (1인 기준)</span>
-    <div class="section-line"></div>
-  </div>
-  <div class="info-section">
-    <div class="info-box">
-      <table class="budget-table" id="budgetTable">
-        <thead>
-          <tr><th>항목</th><th>내용</th><th>예상 금액</th></tr>
-        </thead>
-        <tbody id="budgetBody">
-          <tr><td>✈️ 항공권</td><td>김포↔제주 왕복 (성수기 제외)</td><td class="amount">약 100,000원</td></tr>
-          <tr><td>🏨 숙소</td><td>3박 기준 (게스트하우스~중급 호텔)</td><td class="amount">약 150,000원</td></tr>
-          <tr><td>🍜 식비</td><td>하루 3끼 × 4일</td><td class="amount">약 120,000원</td></tr>
-          <tr><td>🚗 렌터카</td><td>3박 4일 소형차 기준</td><td class="amount">약 100,000원</td></tr>
-          <tr><td>🎯 입장료·액티비티</td><td>관광지 입장, 체험 등</td><td class="amount">약 40,000원</td></tr>
-          <tr><td>🛍️ 쇼핑·기타</td><td>기념품, 간식 등</td><td class="amount">약 50,000원</td></tr>
-          <tr class="budget-total-row"><td colspan="2"><strong>1인 총 예상 비용</strong></td><td class="amount">약 560,000원</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
+  <div class="section-header"><span class="section-badge">RESERVE</span><span class="section-title">📞 식당 예약 링크 & 웨이팅 팁</span><div class="section-line"></div></div>
+  <div class="info-section"><div class="info-box" id="reserveTips"></div></div>
 
-  <!-- ⑤ 아이 동반 팁 (조건부) -->
+  <div class="section-header"><span class="section-badge">TIP</span><span class="section-title">🌧 비 오는 날 대체 코스</span><div class="section-line"></div></div>
+  <div class="info-section"><div class="rain-cards" id="rainCourses"></div></div>
+
+  <div class="section-header"><span class="section-badge">BUDGET</span><span class="section-title">💰 예상 예산 (1인 기준)</span><div class="section-line"></div></div>
+  <div class="info-section"><div class="info-box"><table class="budget-table"><thead><tr><th>항목</th><th>내용</th><th>예상 금액</th></tr></thead><tbody id="budgetBody"></tbody></table></div></div>
+
+  <div class="section-header"><span class="section-badge">LOCAL PICK</span><span class="section-title">🍜 숨은 현지 맛집</span><div class="section-line"></div></div>
+  <div class="info-section"><div class="info-box"><div class="kids-tips" id="hiddenFoodTips"></div></div></div>
+
+  <div class="section-header"><span class="section-badge">STAY</span><span class="section-title">🏨 숙소 추천 & 지역 팁</span><div class="section-line"></div></div>
+  <div class="info-section"><div class="info-box" id="stayTips"></div></div>
+
   <div id="kidsTipSection" style="display:none;">
-    <div class="section-header">
-      <span class="section-badge">KIDS</span>
-      <span class="section-title">👶 아이 동반 팁</span>
-      <div class="section-line"></div>
-    </div>
-    <div class="info-section">
-      <div class="info-box">
-        <div class="kids-tips" id="kidsTips">
-          <div class="kids-tip-row"><div class="kids-tip-icon">🍼</div><div>수유실·기저귀 교환대는 대형 카페, 마트, 주요 관광지에 구비되어 있어요. 방문 전 네이버 지도에서 미리 확인하세요.</div></div>
-          <div class="kids-tip-row"><div class="kids-tip-icon">🚗</div><div>제주는 대중교통이 불편해 렌터카가 필수예요. 카시트 옵션을 미리 신청하세요 (대부분 무료 또는 소액).</div></div>
-          <div class="kids-tip-row"><div class="kids-tip-icon">🏖️</div><div>협재해수욕장, 함덕해수욕장은 수심이 얕아 아이들이 놀기 좋아요. 물놀이 장비는 현지 대여도 가능.</div></div>
-          <div class="kids-tip-row"><div class="kids-tip-icon">🍽️</div><div>노키즈존 제외 요청을 선택하신 경우, 이 가이드의 모든 식당은 아이 동반 입장 가능해요.</div></div>
-        </div>
-      </div>
-    </div>
+    <div class="section-header"><span class="section-badge">KIDS</span><span class="section-title">👶 아이 동반 팁</span><div class="section-line"></div></div>
+    <div class="info-section"><div class="info-box"><div class="kids-tips" id="kidsTips">
+      <div class="kids-tip-row"><div class="kids-tip-icon">🍼</div><div>수유실·기저귀 교환대는 대형 카페, 마트, 주요 관광지에 구비되어 있는지 방문 전 확인하세요.</div></div>
+      <div class="kids-tip-row"><div class="kids-tip-icon">🚗</div><div>아이 동반 일정은 이동시간보다 휴식시간을 넉넉히 잡는 게 좋아요.</div></div>
+    </div></div></div>
   </div>
 
-  <!-- ⑥ 여행 준비 체크리스트 -->
-  <div class="section-header">
-    <span class="section-badge">CHECK</span>
-    <span class="section-title">✅ 여행 준비 체크리스트</span>
-    <div class="section-line"></div>
-  </div>
-  <div class="info-section">
-    <div class="info-box">
-      <div class="checklist" id="checklist">
-        <div class="check-item"><div class="check-box-icon"></div><div>항공권 / 배편 예약 완료 확인</div></div>
-        <div class="check-item"><div class="check-box-icon"></div><div>숙소 예약 및 체크인 시간 확인</div></div>
-        <div class="check-item"><div class="check-box-icon"></div><div>렌터카 예약 (제주 여행 시 필수)</div></div>
-        <div class="check-item"><div class="check-box-icon"></div><div>인기 식당 사전 예약 (예약 추천 장소 목록 참고)</div></div>
-        <div class="check-item"><div class="check-box-icon"></div><div>네이버페이 / 카카오페이 충전</div></div>
-        <div class="check-item"><div class="check-box-icon"></div><div>날씨 앱에서 여행 기간 날씨 미리 확인</div></div>
-        <div class="check-item"><div class="check-box-icon"></div><div>상비약 챙기기 (소화제, 멀미약, 밴드 등)</div></div>
-      </div>
-    </div>
-  </div>
+  <div class="section-header"><span class="section-badge">CHECK</span><span class="section-title">✅ 여행 준비 체크리스트</span><div class="section-line"></div></div>
+  <div class="info-section"><div class="info-box"><div class="checklist" id="checklist">
+    <div class="check-item"><div class="check-box-icon"></div><div>항공권 / 교통편 예약 완료 확인</div></div>
+    <div class="check-item"><div class="check-box-icon"></div><div>숙소 예약 및 체크인 시간 확인</div></div>
+    <div class="check-item"><div class="check-box-icon"></div><div>인기 식당 사전 예약 또는 웨이팅 확인</div></div>
+    <div class="check-item"><div class="check-box-icon"></div><div>여행 기간 날씨와 휴무일 확인</div></div>
+    <div class="check-item"><div class="check-box-icon"></div><div>상비약, 보조배터리, 여권/신분증 챙기기</div></div>
+  </div></div></div>
 
-  <!-- ⑦ 현지인 느낌 팁 -->
-  <div class="section-header">
-    <span class="section-badge">LOCAL</span>
-    <span class="section-title">🧭 현지인처럼 즐기는 법</span>
-    <div class="section-line"></div>
-  </div>
-  <div class="info-section">
-    <div class="local-tip" id="localTip">
-      <div class="local-tip-icon">💬</div>
-      <div>
-        <div class="local-tip-label">현지인 한줄 팁</div>
-        <div class="local-tip-text" id="localTipText">"제주 현지인들은 관광객이 많은 성산일출봉보다 이른 아침 한적한 우도 자전거 투어를 더 즐겨요. 오전 7시 이전 첫 배를 타면 인파 없이 온전한 풍경을 볼 수 있어요."</div>
-      </div>
-    </div>
-  </div>
+  <div class="section-header"><span class="section-badge">LOCAL</span><span class="section-title">🧭 현지인처럼 즐기는 법</span><div class="section-line"></div></div>
+  <div class="info-section"><div class="local-tip"><div class="local-tip-icon">💬</div><div><div class="local-tip-label">현지인 한줄 팁</div><div class="local-tip-text" id="localTipText"></div></div></div></div>
 
-  
-  <!-- ⑤ 상세 이동 & 교통 팁 -->
-  <div class="section-header">
-    <span class="section-badge">ROUTE</span>
-    <span class="section-title">🚗 시간대별 상세 동선 & 교통 팁</span>
-    <div class="section-line"></div>
-  </div>
-  <div class="info-section">
-    <div class="info-box" id="transportTips">
-      <div class="info-row"><div class="info-row-label">오전 이동</div><div class="info-row-val">공항 도착 직후 렌터카 수령 후 애월 방면 이동 추천 · 공항 근처는 오전 10시 이후 교통량 증가</div></div>
-      <div class="info-row"><div class="info-row-label">주차 팁</div><div class="info-row-val">협재/애월 인기 카페는 오후 2~4시 가장 혼잡. 오전 방문 시 주차 수월</div></div>
-      <div class="info-row"><div class="info-row-label">택시 추천</div><div class="info-row-val">제주 시내 저녁 술자리 후에는 렌터카 대신 카카오T 이용 추천</div></div>
-      <div class="info-row"><div class="info-row-label">추천 체류시간</div><div class="info-row-val">카페 1~1.5시간 · 관광지 1~2시간 · 식사 1시간 기준으로 동선 설계됨</div></div>
-    </div>
-  </div>
-
-  <!-- ⑥ 예약 링크 & 웨이팅 팁 -->
-  <div class="section-header">
-    <span class="section-badge">RESERVE</span>
-    <span class="section-title">📞 식당 예약 링크 & 웨이팅 팁</span>
-    <div class="section-line"></div>
-  </div>
-  <div class="info-section">
-    <div class="info-box" id="reserveTips">
-      <div class="info-row"><div class="info-row-label">흑돈가 제주본점</div><div class="info-row-val">주말 기준 30~50분 웨이팅 가능 · 오후 5시 이전 방문 추천 · 네이버 예약 가능</div></div>
-      <div class="info-row"><div class="info-row-label">자매국수</div><div class="info-row-val">점심시간 웨이팅 매우 긴 편 · 오전 10:30 이전 방문 추천</div></div>
-      <div class="info-row"><div class="info-row-label">카페 오드트</div><div class="info-row-val">오션뷰 좌석은 오후 시간대 혼잡 · 창가석 선호 시 오전 방문 추천</div></div>
-    </div>
-  </div>
-
-  <!-- ⑦ 숨은 현지 맛집 -->
-  <div class="section-header">
-    <span class="section-badge">LOCAL PICK</span>
-    <span class="section-title">🍜 숨은 현지 맛집</span>
-    <div class="section-line"></div>
-  </div>
-  <div class="info-section">
-    <div class="info-box">
-      <div class="kids-tips" id="hiddenFoodTips">
-        <div class="kids-tip-row"><div class="kids-tip-icon">⭐</div><div>관광객 많은 흑돼지 거리보다 <strong>돈사돈 본관</strong> 같은 현지 근고기집 만족도가 높은 편이에요.</div></div>
-        <div class="kids-tip-row"><div class="kids-tip-icon">⭐</div><div>성산 근처는 작은 해녀식당들이 가성비와 신선도가 좋아 현지인 방문이 많아요.</div></div>
-        <div class="kids-tip-row"><div class="kids-tip-icon">⭐</div><div>우도에서는 프랜차이즈보다 땅콩 아이스크림 로컬 매장 이용 추천.</div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ⑧ 숙소 추천 -->
-  <div class="section-header">
-    <span class="section-badge">STAY</span>
-    <span class="section-title">🏨 숙소 추천 & 지역 팁</span>
-    <div class="section-line"></div>
-  </div>
-  <div class="info-section">
-    <div class="info-box" id="stayTips">
-      <div class="info-row"><div class="info-row-label">연인 여행</div><div class="info-row-val">애월 · 함덕 지역 추천 · 감성 숙소와 카페 접근성이 좋아요.</div></div>
-      <div class="info-row"><div class="info-row-label">가족 여행</div><div class="info-row-val">중문 · 서귀포 추천 · 리조트와 대형마트 접근성이 좋아요.</div></div>
-      <div class="info-row"><div class="info-row-label">아이 동반</div><div class="info-row-val">함덕 해변 근처 숙소 추천 · 수심이 얕고 산책로가 좋아요.</div></div>
-      <div class="info-row"><div class="info-row-label">렌터카 팁</div><div class="info-row-val">제주는 동서 이동 시간이 길어 동선을 기준으로 숙소를 1~2번 나누는 것도 좋아요.</div></div>
-    </div>
-  </div>
-
-
-  <!-- ⑧ 면책 고지 -->
-  <div class="disclaimer">
-    <span style="font-size:13px;flex-shrink:0;">⚠️</span>
-    <p class="disclaimer-text"><strong>본 가이드는 AI가 생성한 참고용 정보</strong>입니다. 실제 영업시간, 주소, 가격, 예약 가능 여부, 노키즈존 정책 등은 <strong>여행 전 반드시 다시 한번 직접 확인</strong>하시기 바랍니다. Journiro는 정보의 정확성에 대해 책임을 지지 않으며, 이로 인한 불이익의 책임은 이용자 본인에게 있습니다.</p>
-  </div>
-
-  <!-- FOOTER -->
-  <div class="pdf-footer">
-    <div class="footer-logo">JOURNIRO</div>
-    <div class="footer-note">✦ 좋은 여행 되세요 :)</div>
-    <div class="footer-url">journiro.com</div>
-  </div>
-
-</div><!-- #pdf-content -->
+  <div class="disclaimer"><span style="font-size:13px;flex-shrink:0;">⚠️</span><p class="disclaimer-text"><strong>본 가이드는 AI가 생성한 참고용 정보</strong>입니다. 실제 영업시간, 주소, 가격, 예약 가능 여부, 노키즈존 정책 등은 <strong>여행 전 반드시 다시 한번 직접 확인</strong>하시기 바랍니다. Journiro는 정보의 정확성에 대해 책임을 지지 않으며, 이로 인한 불이익의 책임은 이용자 본인에게 있습니다.</p></div>
+  <div class="pdf-footer"><div class="footer-logo">JOURNIRO</div><div class="footer-note">✦ 좋은 여행 되세요 :)</div><div class="footer-url">journiro.com</div></div>
+</div>
 
 <script>
-// ── 실제 데이터 연동 ──
-// 실제 배포 후에는 메인 페이지에서 저장한 localStorage 데이터가 우선 반영됩니다.
-// 방콕 등 지원 도시도 해당 도시 데이터로 렌더링됩니다.
-
-const sampleTripData = {
-  destination:'방콕', duration:'2박 3일', companion:'친구', extras:[], themes:['맛집 탐방'],
+const PREVIEW_MODE = false;
+const previewTripData = {
+  destination:'도쿄', duration:'2박 3일', companion:'친구', extras:[], themes:['맛집 탐방'],
   dateType:'미정', dateStart:'', dateEnd:'',
-  intro:'사원과 야시장, 로컬 맛집을 따라 걷는 방콕 여행 ✨',
+  intro:'시부야의 에너지와 맛집을 따라 걷는 도쿄 여행 ✨',
   days:[
-    {day:'Day 1',area:'왕궁 · 짜오프라야',theme:'대표 명소 & 강변 야경',slots:[
-      {time:'오전',emoji:'🏰',place:'The Grand Palace',tag:'명소',desc:'방콕을 처음 방문한다면 꼭 들를 만한 대표 왕궁 코스예요.'},
-      {time:'오후',emoji:'🛕',place:'Wat Pho',tag:'사원',desc:'와불상으로 유명한 방콕 대표 사원이에요.'},
-      {time:'저녁',emoji:'🌃',place:'ICONSIAM',tag:'쇼핑',desc:'강변 야경과 쇼핑, 식사를 함께 즐기기 좋은 대형 복합몰이에요.'}
-    ]},
-    {day:'Day 2',area:'시암 · 올드타운',theme:'맛집 & 쇼핑',slots:[
-      {time:'오전',emoji:'🏠',place:'Jim Thompson House Museum',tag:'문화',desc:'태국 실크와 전통 건축을 함께 볼 수 있는 실내 명소예요.'},
-      {time:'오후',emoji:'🛍️',place:'Siam Paragon',tag:'쇼핑',desc:'시암 중심부에서 쇼핑과 카페를 함께 즐기기 좋아요.'},
-      {time:'저녁',emoji:'🍜',place:'Thipsamai Pad Thai Pratu Phi',tag:'맛집',desc:'방콕 팟타이 식당으로 널리 알려진 실제 식당 후보예요.'}
+    {day:'Day 1',area:'시부야 · 다이칸야마',theme:'맛집 & 감성 쇼핑',slots:[
+      {time:'오전',emoji:'☕',place:'Fuglen Tokyo',tag:'카페',desc:'시부야 근처에서 커피와 브런치로 여유롭게 시작하기 좋은 카페예요.'},
+      {time:'오후',emoji:'📚',place:'다이칸야마 T-Site',tag:'쇼핑',desc:'서점, 라이프스타일 숍, 카페를 함께 즐길 수 있는 감성 코스예요.'},
+      {time:'저녁',emoji:'🍜',place:'이치란 라멘 신주쿠점',tag:'맛집',desc:'도쿄 첫 방문자도 부담 없이 즐기기 좋은 라멘 식당 후보예요.'}
     ]}
   ]
 };
-
-function getStoredTripData(){
-  try{const raw=localStorage.getItem('journiroPdfData'); if(!raw)return null; const d=JSON.parse(raw); if(!d?.destination||!Array.isArray(d.days))return null; return d;}catch(e){return null;}
-}
-function norm(dest=''){ if(dest.includes('제주'))return'제주'; if(dest.includes('부산'))return'부산'; if(dest.includes('서울'))return'서울'; if(dest.includes('도쿄'))return'도쿄'; if(dest.includes('오사카'))return'오사카'; if(dest.includes('방콕')||dest.toLowerCase().includes('bangkok'))return'방콕'; return dest; }
-
+function getStoredTripData(){try{if(PREVIEW_MODE)return null;const raw=localStorage.getItem('journiroPdfData');if(!raw)return null;const d=JSON.parse(raw);if(!d?.destination||!Array.isArray(d.days))return null;return d;}catch(e){return null;}}
+function norm(dest=''){if(dest.includes('제주'))return'제주';if(dest.includes('부산'))return'부산';if(dest.includes('서울'))return'서울';if(dest.includes('도쿄'))return'도쿄';if(dest.includes('오사카'))return'오사카';if(dest.includes('방콕')||dest.toLowerCase().includes('bangkok'))return'방콕';return dest;}
 const CITY={
+ '도쿄':{
+  keep:['도쿄','Tokyo','시부야','신주쿠','아사쿠사','하라주쿠','아키하바라','긴자','우에노','롯폰기','다이칸야마','츠키지','센소지','메이지','Fuglen','T-Site','Shibuya','Shinjuku','Asakusa','Ginza','Afuri','이치란'],
+  sampleDays:previewTripData.days,
+  rain:[['🏛️','도쿄국립박물관','비 오는 날에도 실내에서 일본 문화와 전시를 보기 좋아요.'],['🛍️','GINZA SIX','쇼핑과 식사를 한 번에 해결할 수 있는 실내 코스예요.'],['📚','다이칸야마 T-Site','비 오는 날에도 서점과 카페를 함께 즐기기 좋아요.']],
+  food:[['이치란 라멘 신주쿠점','도쿄에서 접근성이 좋은 라멘 식당 후보예요.'],['츠키지 장외시장','초밥과 해산물 먹거리를 다양하게 즐기기 좋아요.'],['Afuri Harajuku','하라주쿠 일정과 묶기 좋은 라멘 식당 후보예요.']],
+  stay:{'가족':[['JR Kyushu Hotel Blossom Shinjuku','신주쿠역 접근성이 좋아 가족 이동이 편하고 공항 이동도 비교적 수월해요.'],['Hotel Metropolitan Tokyo Marunouchi','도쿄역 접근성이 좋아 부모님 동반 일정에 안정적이에요.'],['Mimaru Tokyo Ueno East','넓은 객실 구성이 있어 가족 여행에 실용적이에요.']],
+    '연인':[['Shibuya Stream Excel Hotel Tokyu','시부야 야경과 맛집 동선이 좋아 데이트 여행에 잘 맞아요.'],['The Gate Hotel Tokyo by Hulic','긴자·히비야 권역 데이트 코스에 접근성이 좋아요.'],['Hotel The Celestine Tokyo Shiba','도쿄타워 권역의 조용한 분위기를 즐기기 좋아요.']],
+    '친구':[['sequence MIYASHITA PARK','시부야 쇼핑·맛집 동선에 바로 붙어 있어 친구 여행에 좋아요.'],['Hotel Gracery Shinjuku','신주쿠 야식·쇼핑 동선에 편한 숙소 후보예요.'],['Nohga Hotel Ueno Tokyo','우에노·아사쿠사 권역을 함께 보기 좋아요.']],
+    '혼자':[['Tokyu Stay Shinjuku','신주쿠 중심부라 혼자 이동하기 편하고 세탁 시설도 실용적이에요.'],['Nohga Hotel Akihabara Tokyo','아키하바라·우에노 접근성이 좋아 혼행에 편해요.'],['Daiwa Roynet Hotel Ginza Premier','긴자권에서 조용하고 깔끔한 혼행 숙소 후보예요.']]},
+  areaStay:{'시부야':{'가족':[['Shibuya Stream Excel Hotel Tokyu','시부야역 접근성이 좋아 가족 이동이 편하고 맛집·쇼핑 동선이 좋아요.'],['JR-East Hotel Mets Shibuya','역 접근성이 좋아 부모님 동반 이동 부담이 적어요.']],
+    '연인':[['Shibuya Stream Excel Hotel Tokyu','시부야 야경과 데이트 동선이 좋아 연인 여행에 잘 맞아요.'],['all day place shibuya','시부야 감성 카페·맛집 동선과 잘 어울리는 숙소예요.']],
+    '친구':[['sequence MIYASHITA PARK','시부야 쇼핑·맛집 동선에 바로 붙어 있어 친구 여행에 좋아요.'],['Hotel Indigo Tokyo Shibuya','시부야 중심부 분위기를 즐기기 좋은 숙소 후보예요.']],
+    '혼자':[['Tokyu Stay Shibuya Shin-Minamiguchi','혼자 이동하기 편하고 장기 여행에도 실용적인 숙소예요.'],['JR-East Hotel Mets Shibuya','역 접근성이 좋아 혼행 동선이 안정적이에요.']]}},
+  transport:[['권역 추천','시부야·하라주쿠·다이칸야마처럼 인접 권역을 묶으면 이동 피로가 줄어요.'],['지하철 팁','도쿄는 환승이 잦아 숙소를 JR/메트로 주요역 근처로 잡는 게 좋아요.'],['공항 이동','나리타/하네다 이동 시간을 고려해 첫날과 마지막 날은 무리한 일정을 피하세요.']],
+  local:'도쿄는 하루에 권역을 넓게 잡으면 이동 시간이 길어져요. 시부야·신주쿠·긴자처럼 권역별로 묶으면 훨씬 편해요.',
+  landmark:{cls:'tokyo',title:'Tokyo Tower',sub:'Tokyo · Japan',emoji:'🗼'}
+ },
  '방콕':{
   keep:['방콕','Bangkok','Siam','시암','Thonglor','통로','Asok','아속','Rama','Chatuchak','짜뚜짝','ICONSIAM','아이콘시암','Wat','왕궁','왓','카오산','Chula','쭐라','JODD','Terminal 21','Lumpini','룸피니','Jim Thompson','Grand Palace','Jay Fai','Jeh O','Thipsamai','After You'],
-  sampleDays:sampleTripData.days,
+  sampleDays:[{day:'Day 1',area:'왕궁 · 짜오프라야',theme:'대표 명소 & 강변 야경',slots:[{time:'오전',emoji:'🏰',place:'The Grand Palace',tag:'명소',desc:'방콕을 처음 방문한다면 꼭 들를 만한 대표 왕궁 코스예요.'},{time:'오후',emoji:'🛕',place:'Wat Pho',tag:'사원',desc:'와불상으로 유명한 방콕 대표 사원이에요.'},{time:'저녁',emoji:'🌃',place:'ICONSIAM',tag:'쇼핑',desc:'강변 야경과 쇼핑, 식사를 함께 즐기기 좋은 대형 복합몰이에요.'}]}],
   rain:[['🏛️','Jim Thompson House Museum','비 오는 날에도 태국 전통 건축과 실내 전시를 함께 보기 좋아요.'],['🛍️','ICONSIAM','쇼핑, 식사, 강변 전망을 한 번에 해결할 수 있는 실내 코스예요.'],['🍰','After You Dessert Cafe Siam Paragon','시암 쇼핑 동선 중 쉬어가기 좋은 디저트 카페예요.']],
   food:[['Thipsamai Pad Thai Pratu Phi','방콕 팟타이 식당으로 널리 알려진 실제 식당 후보예요.'],['Jeh O Chula','방콕 로컬 맛집으로 유명한 식당 후보예요.'],['Raan Jay Fai','미쉐린으로 알려진 방콕 스트리트푸드 식당이에요.']],
-  stay:{'가족':[['Grande Centre Point Terminal 21','아속역과 연결되어 가족 여행 동선이 편해요.'],['Chatrium Hotel Riverside Bangkok','강변 전망과 여유 있는 객실로 가족 여행에 좋아요.'],['Eastin Grand Hotel Phayathai','공항철도와 BTS 접근성이 좋아 이동이 편해요.']],
-        '연인':[['The Standard, Bangkok Mahanakhon','루프탑과 시티뷰를 즐기기 좋은 감각적인 숙소예요.'],['SO/ Bangkok','룸피니공원 근처 시티뷰 숙소 후보예요.']],
-        '친구':[['Grande Centre Point Terminal 21','쇼핑과 대중교통 접근성이 좋아 친구 여행에 편해요.'],['ASAI Bangkok Chinatown','야시장과 차이나타운 동선에 어울리는 숙소예요.']],
-        '혼자':[['Lub d Bangkok Siam','시암 접근성이 좋은 실용적인 혼행 숙소 후보예요.'],['Ibis Bangkok Siam','BTS 접근성이 좋아 혼자 이동하기 편해요.']]},
-  transport:[['BTS/MRT 추천','방콕은 교통체증이 심해 낮 시간대에는 BTS/MRT 중심 동선이 편해요.'],['택시 팁','왕궁·카오산 쪽은 대중교통 연결이 애매해 그랩 이용이 편할 수 있어요.'],['권역 추천','시암·아속 / 왕궁·강변 / 짜뚜짝처럼 권역별로 하루를 나누면 좋아요.']],
-  local:'방콕은 교통체증이 심해서 하루에 너무 먼 권역을 섞지 않는 게 좋아요. BTS/MRT 동선을 기준으로 일정을 잡으면 훨씬 편해요.',
+  stay:{'가족':[['Grande Centre Point Terminal 21','아속역과 연결되어 가족 여행 동선이 편해요.'],['Chatrium Hotel Riverside Bangkok','강변 전망과 여유 있는 객실로 가족 여행에 좋아요.']],
+    '친구':[['Grande Centre Point Terminal 21','쇼핑과 대중교통 접근성이 좋아 친구 여행에 편해요.'],['ASAI Bangkok Chinatown','야시장과 차이나타운 동선에 어울리는 숙소예요.']],
+    '혼자':[['Lub d Bangkok Siam','시암 접근성이 좋은 실용적인 혼행 숙소 후보예요.'],['Ibis Bangkok Siam','BTS 접근성이 좋아 혼자 이동하기 편해요.']]},
+  transport:[['BTS/MRT 추천','방콕은 교통체증이 심해 낮 시간대에는 BTS/MRT 중심 동선이 편해요.'],['택시 팁','왕궁·카오산 쪽은 대중교통 연결이 애매해 그랩 이용이 편할 수 있어요.']],
+  local:'방콕은 교통체증이 심해서 하루에 너무 먼 권역을 섞지 않는 게 좋아요.',
   landmark:{cls:'bangkok',title:'Wat Arun & Chao Phraya',sub:'Bangkok · Thailand',emoji:'🛕'}
  },
  '부산':{
@@ -535,186 +234,46 @@ const CITY={
   landmark:{cls:'jeju',title:'Hallasan & Jeju Sea',sub:'Jeju · Korea',emoji:'⛰️'}
  }
 };
-
 function cityData(dest){return CITY[norm(dest)]||null;}
 function slotBelongsToCity(slot,city){if(!city)return true;const txt=`${slot.place||''} ${slot.address||''} ${slot.desc||''}`;return city.keep.some(k=>txt.includes(k));}
 function forceCityDays(days,dest){const c=cityData(dest);if(!c)return days||[];const cleaned=(days||[]).map(day=>({...day,slots:(day.slots||[]).filter(s=>slotBelongsToCity(s,c))})).filter(d=>d.slots.length);return cleaned.length?cleaned:c.sampleDays;}
-function enrichSlot(slot,idx,dayIdx,dest){const n={...slot};if(!n.address)n.address='방문 전 지도 앱에서 정확한 주소와 영업시간을 확인하세요.';if(!n.why)n.why=`${dest} 여행 동선에 넣기 좋은 장소예요. 실제 방문 전 영업시간과 휴무를 확인하세요.`;if(!n.waiting)n.waiting=idx===2?'보통':'없음';if(typeof n.nokids!=='boolean')n.nokids=false;if(typeof n.reserve!=='boolean')n.reserve=idx===2;if(!n.reserveWhere)n.reserveWhere=n.reserve?'공식 채널/지도 앱 확인':'';if(!n.move)n.move=idx<2?'다음 장소까지 지도 앱 기준 이동시간 확인':'';return n;}
+function makeWhyText(slot,idx,dayIdx,dest){const tag=slot.tag||'';const place=slot.place||'이 장소';if(tag.includes('맛집')||tag.includes('식사'))return `${place}는 ${dest} 일정 중 식사 만족도를 높이기 좋은 실제 식당 후보예요. 방문 전 웨이팅과 브레이크타임을 확인하세요.`;if(tag.includes('카페'))return `${place}는 이동 중 쉬어가며 분위기를 잡기 좋은 카페 코스예요. 창가석이나 인기 메뉴는 미리 확인해보세요.`;if(tag.includes('시장')||tag.includes('쇼핑'))return `${place}는 식사·간식·쇼핑을 한 번에 해결하기 좋아 일정 효율이 높아요.`;if(tag.includes('자연')||tag.includes('산책')||tag.includes('바다'))return `${place}는 사진과 산책을 함께 즐기기 좋아 이동 피로를 줄여주는 코스예요.`;if(tag.includes('문화')||tag.includes('명소')||tag.includes('사원')||tag.includes('관광'))return `${place}는 ${dest}의 분위기를 직관적으로 느낄 수 있는 대표 코스예요.`;return [`${place}는 하루 일정의 분위기를 바꿔주는 코스예요.`,`주변 동선과 함께 묶으면 이동이 자연스러운 장소예요.`,`잠시 쉬어가며 여행 흐름을 정리하기 좋은 포인트예요.`][(idx+dayIdx)%3];}
+function enrichSlot(slot,idx,dayIdx,dest){const n={...slot};if(!n.address)n.address='방문 전 지도 앱에서 정확한 주소와 영업시간을 확인하세요.';if(!n.why)n.why=makeWhyText(n,idx,dayIdx,dest);if(!n.waiting)n.waiting=idx===2?'보통':'없음';if(typeof n.nokids!=='boolean')n.nokids=false;if(typeof n.reserve!=='boolean')n.reserve=idx===2;if(!n.reserveWhere)n.reserveWhere=n.reserve?'공식 채널/지도 앱 확인':'';if(!n.move)n.move=idx<2?'다음 장소까지 지도 앱 기준 이동시간 확인':'';return n;}
 function makeRainCourses(dest){const c=cityData(dest);return(c?.rain||[['🎨',`${dest} 실내 명소`,'비 오는 날에는 실내 코스로 바꾸면 좋아요.']]).map(x=>({emoji:x[0],place:x[1],desc:x[2]}));}
 function makeReserveTips(data){const c=cityData(data.destination);const food=(c?.food||[]).map(([place,desc])=>({place,desc:`${desc} 방문 전 영업시간, 브레이크타임, 예약 가능 여부를 확인하세요.`}));return food.length?food:(data.days||[]).flatMap(d=>d.slots||[]).slice(0,3).map(s=>({place:s.place,desc:'방문 전 지도 앱에서 예약/웨이팅 여부를 확인하세요.'}));}
 function makeTransportTips(dest,extras){let tips=cityData(dest)?.transport||[['권역 추천','하루에 1~2개 권역으로 묶으면 이동 피로가 줄어요.']];if((extras||[]).includes('노약자 동반'))tips=[['노약자 동선','계단과 긴 도보를 줄이고 택시 또는 주차 편한 장소 위주로 이동하세요.'],...tips];return tips.slice(0,5);}
-function makeStayTips(dest,comp,extras){const c=cityData(dest);const type=(comp&&c?.stay?.[comp])?comp:Object.keys(c?.stay||{})[0];let rows=c?.stay?.[type]||[[`${dest} 중심권 호텔`,'이동과 식사가 편한 중심권 숙소를 추천해요.']];const prefix=(extras||[]).includes('노약자 동반')?'노약자 동반 기준 · ':(extras||[]).includes('어린 아이 동반')?'아이 동반 기준 · ':`${comp||'여행'} 기준 · `;return rows.slice(0,3).map(([p,d])=>[p,prefix+d]);}
-function makeBudget(duration){if(duration==='당일치기')return{budget:[{item:'🚆 교통비',desc:'왕복 교통비 또는 현지 이동비',amount:'약 30,000~120,000원'},{item:'🍜 식비',desc:'식사 1~2회 + 카페',amount:'약 30,000~60,000원'},{item:'🎯 입장료',desc:'전시·관광지·체험',amount:'약 10,000~30,000원'},{item:'🛍️ 기타',desc:'간식·기념품',amount:'약 10,000~30,000원'}],budgetTotal:'약 80,000~240,000원'};return{budget:[{item:'✈️ 항공/교통',desc:'왕복 교통비 또는 장거리 이동비',amount:'약 100,000원'},{item:'🏨 숙소',desc:`${duration||'여행 기간'} 기준 1인 예상 숙박비`,amount:'약 150,000원'},{item:'🍜 식비',desc:'식사·카페·간식 포함',amount:'약 120,000원'},{item:'🚕 현지 이동',desc:'택시·대중교통·렌터카',amount:'약 100,000원'},{item:'🎯 입장료',desc:'관광지 입장, 체험 등',amount:'약 40,000원'},{item:'🛍️ 쇼핑·기타',desc:'기념품, 간식 등',amount:'약 50,000원'}],budgetTotal:'약 560,000원'};}
-function buildTripData(){const s=getStoredTripData()||sampleTripData;const budgetInfo=makeBudget(s.duration);const c=cityData(s.destination);const days=forceCityDays(s.days||[],s.destination).map((d,di)=>({...d,slots:(d.slots||[]).map((sl,i)=>enrichSlot(sl,i,di,s.destination))}));const base={destination:s.destination,duration:s.duration,companion:s.companion||'미정',extras:s.extras||[],themes:s.themes||[],dateType:s.dateType||'미정',dateStart:s.dateStart||'',dateEnd:s.dateEnd||'',intro:s.intro||`${s.destination} 맞춤 여행 일정입니다.`,days,rainCourses:makeRainCourses(s.destination),budget:budgetInfo.budget,budgetTotal:budgetInfo.budgetTotal};base.localTip=(c?.local||'하루 권역을 좁게 잡으면 이동 피로가 줄어요.')+((base.extras||[]).includes('노약자 동반')?' 노약자 동반이라면 카페나 숙소 휴식 시간을 꼭 넣어주세요.':'');base.transportTips=makeTransportTips(base.destination,base.extras);base.reserveTips=makeReserveTips(base);base.hiddenFoodTips=(c?.food||[[`${base.destination} 현지 식당 후보`,'관광지 바로 앞보다 한 블록 안쪽 식당이 대기와 가격 부담이 적은 편이에요.']]);base.stayTips=makeStayTips(base.destination,base.companion,base.extras);return base;}
+function detectPrimaryArea(days){const text=(days||[]).map(d=>`${d.area||''} ${(d.slots||[]).map(s=>s.place||'').join(' ')}`).join(' ');if(text.includes('시부야')||text.includes('Shibuya'))return'시부야';if(text.includes('신주쿠')||text.includes('Shinjuku'))return'신주쿠';if(text.includes('긴자')||text.includes('Ginza'))return'긴자';return'';}
+function makeStayTips(dest,comp,extras,days=[]){const c=cityData(dest);const area=detectPrimaryArea(days);const type=(comp&&c?.stay?.[comp])?comp:Object.keys(c?.stay||{})[0];let rows=c?.areaStay?.[area]?.[comp]||c?.stay?.[type]||[[`${dest} 중심권 호텔`,'이동과 식사가 편한 중심권 숙소를 추천해요.']];const prefix=(extras||[]).includes('노약자 동반')?'노약자 동반 기준 · ':(extras||[]).includes('어린 아이 동반')?'아이 동반 기준 · ':`${comp||'여행'} 기준 · `;return rows.slice(0,3).map(([p,d])=>[p,prefix+d]);}
+function makeBudget(duration,destination=''){const city=norm(destination);if(duration==='당일치기')return{budget:[{item:'🚆 교통비',desc:'왕복 교통비 또는 현지 이동비',amount:'약 30,000~120,000원'},{item:'🍜 식비',desc:'식사 1~2회 + 카페',amount:'약 30,000~70,000원'},{item:'🎯 입장료',desc:'전시·관광지·체험',amount:'약 10,000~40,000원'},{item:'🛍️ 기타',desc:'간식·기념품',amount:'약 10,000~40,000원'}],budgetTotal:'약 80,000~270,000원'};const presets={'도쿄':{transport:'약 300,000~700,000원',stay:'약 180,000~450,000원',food:'약 120,000~250,000원',local:'약 40,000~90,000원',activity:'약 40,000~120,000원',etc:'약 50,000~150,000원',total:'약 730,000~1,760,000원'},'방콕':{transport:'약 350,000~800,000원',stay:'약 120,000~350,000원',food:'약 80,000~200,000원',local:'약 40,000~120,000원',activity:'약 40,000~150,000원',etc:'약 50,000~150,000원',total:'약 680,000~1,770,000원'},'부산':{transport:'약 60,000~180,000원',stay:'약 120,000~300,000원',food:'약 90,000~180,000원',local:'약 30,000~100,000원',activity:'약 20,000~80,000원',etc:'약 30,000~100,000원',total:'약 350,000~940,000원'},'제주':{transport:'약 100,000~300,000원',stay:'약 150,000~400,000원',food:'약 100,000~220,000원',local:'약 100,000~250,000원',activity:'약 30,000~120,000원',etc:'약 40,000~120,000원',total:'약 520,000~1,410,000원'}};const p=presets[city]||presets['부산'];return{budget:[{item:'✈️ 항공/교통',desc:'왕복 항공권 또는 장거리 이동비',amount:p.transport},{item:'🏨 숙소',desc:`${duration||'여행 기간'} 기준 1인 예상 숙박비`,amount:p.stay},{item:'🍜 식비',desc:'식사·카페·간식 포함',amount:p.food},{item:'🚕 현지 이동',desc:'지하철·택시·렌터카 등',amount:p.local},{item:'🎯 입장료',desc:'관광지 입장, 전시, 체험 등',amount:p.activity},{item:'🛍️ 쇼핑·기타',desc:'기념품, 간식, 예비비 등',amount:p.etc}],budgetTotal:p.total};}
+function buildTripData(){const s=getStoredTripData()||previewTripData;const budgetInfo=makeBudget(s.duration,s.destination);const c=cityData(s.destination);const days=forceCityDays(s.days||[],s.destination).map((d,di)=>({...d,slots:(d.slots||[]).map((sl,i)=>enrichSlot(sl,i,di,s.destination))}));const base={destination:s.destination,duration:s.duration,companion:s.companion||'미정',extras:s.extras||[],themes:s.themes||[],dateType:s.dateType||'미정',dateStart:s.dateStart||'',dateEnd:s.dateEnd||'',intro:s.intro||`${s.destination} 맞춤 여행 일정입니다.`,days,rainCourses:makeRainCourses(s.destination),budget:budgetInfo.budget,budgetTotal:budgetInfo.budgetTotal};base.localTip=(c?.local||'하루 권역을 좁게 잡으면 이동 피로가 줄어요.')+((base.extras||[]).includes('노약자 동반')?' 노약자 동반이라면 카페나 숙소 휴식 시간을 꼭 넣어주세요.':'');base.transportTips=makeTransportTips(base.destination,base.extras);base.reserveTips=makeReserveTips(base);base.hiddenFoodTips=(c?.food||[[`${base.destination} 현지 식당 후보`,'관광지 바로 앞보다 한 블록 안쪽 식당이 대기와 가격 부담이 적은 편이에요.']]);base.stayTips=makeStayTips(base.destination,base.companion,base.extras,base.days);return base;}
+function getLandmarkData(destination=''){const c=cityData(destination);if(c?.landmark)return c.landmark;return{cls:'tokyo',title:`${destination} Signature`,sub:'Travel Landmark',emoji:'📍'};}
+function renderLandmark(destination){const data=getLandmarkData(destination);const card=document.getElementById('landmarkCard');card.className=`landmark-card ${data.cls}`;document.getElementById('landmarkTitle').textContent=data.title;document.getElementById('landmarkSub').textContent=data.sub;document.getElementById('landmarkEmoji').textContent=data.emoji;}
 const tripData=buildTripData();
 
-function getLandmarkData(destination = '') {
-  const d = norm(destination);
-  const c = cityData(destination);
-  if (c?.landmark) return c.landmark;
-  const map = {
-    '도쿄': { cls: 'tokyo', title: 'Tokyo Tower', sub: 'Tokyo · Japan', emoji: '🗼' },
-    '서울': { cls: 'seoul', title: 'N Seoul Tower', sub: 'Seoul · Korea', emoji: '🗼' },
-    '부산': { cls: 'busan', title: 'Gwangandaegyo Bridge', sub: 'Busan · Korea', emoji: '🌉' },
-    '제주': { cls: 'jeju', title: 'Hallasan & Jeju Sea', sub: 'Jeju · Korea', emoji: '⛰️' },
-    '오사카': { cls: 'osaka', title: 'Osaka Castle', sub: 'Osaka · Japan', emoji: '🏯' },
-    '방콕': { cls: 'bangkok', title: 'Wat Arun & Chao Phraya', sub: 'Bangkok · Thailand', emoji: '🛕' }
-  };
-  return map[d] || { cls: 'busan', title: `${destination} Signature`, sub: 'Travel Landmark', emoji: '📍' };
-}
-function renderLandmark(destination) {
-  const data = getLandmarkData(destination);
-  const card = document.getElementById('landmarkCard');
-  if (!card) return;
-  card.className = `landmark-card ${data.cls}`;
-  document.getElementById('landmarkTitle').textContent = data.title;
-  document.getElementById('landmarkSub').textContent = data.sub;
-  document.getElementById('landmarkEmoji').textContent = data.emoji;
-}
-
-// ── 렌더링 ──
-function render(data) {
-  // 커버
-  document.getElementById('coverDestination').textContent = data.destination;
-  document.getElementById('coverDuration').textContent = data.duration;
-  document.getElementById('coverIntro').textContent = `"${data.intro}"`;
+function render(data){
+  document.getElementById('coverDestination').textContent=data.destination;
+  document.getElementById('coverDuration').textContent=data.duration;
+  document.getElementById('coverIntro').textContent=`"${data.intro}"`;
   renderLandmark(data.destination);
-
-  const metaItems = [
-    `${data.companion} 여행`,
-    data.themes.join(' + ') || '자유 여행',
-    data.dateType === '미정' ? '날짜 미정' : `${data.dateStart} ~ ${data.dateEnd}`,
-    ...data.extras
-  ];
-  document.getElementById('coverMeta').innerHTML = metaItems.map(t =>
-    `<div class="cover-meta-item"><div class="cover-dot"></div><div class="cover-meta-text">${t}</div></div>`
-  ).join('');
-
-  // Day 일정
-  const container = document.getElementById('daySchedules');
-  container.innerHTML = '';
-  data.days.forEach((day, di) => {
-    const section = document.createElement('div');
-    section.innerHTML = `
-      <div class="section-header">
-        <span class="section-badge">${day.day.toUpperCase()}</span>
-        <span class="section-title">📅 ${day.area}</span>
-        <div class="section-line"></div>
-      </div>
-      <div class="day-block">
-        <div class="slot-cards">
-          ${day.slots.map((slot, si) => `
-            <div class="slot-card">
-              <div class="slot-card-top">
-                <span class="slot-time">${slot.time}</span>
-                <div class="slot-main">
-                  <div class="slot-place-row">
-                    <span class="slot-emoji">${slot.emoji}</span>
-                    <span class="slot-place">${slot.place}</span>
-                    <span class="slot-tag">${slot.tag}</span>
-                  </div>
-                  ${slot.address ? `<div class="slot-address">📍 ${slot.address}</div>` : ''}
-                  <div class="slot-desc">${slot.desc}</div>
-                  <div class="slot-why">💡 ${slot.why}</div>
-                </div>
-              </div>
-              <div class="slot-card-bottom">
-                ${slot.waiting === '많음'
-                  ? '<span class="info-chip chip-wait">⏳ 대기 많음</span>'
-                  : slot.waiting === '보통'
-                  ? '<span class="info-chip chip-nowait">⏱ 대기 보통</span>'
-                  : '<span class="info-chip chip-nowait">✅ 대기 거의 없음</span>'}
-                ${slot.nokids
-                  ? '<span class="info-chip chip-nokids">🚫 노키즈존</span>'
-                  : '<span class="info-chip chip-kids">👶 아이 동반 가능</span>'}
-                ${slot.reserve
-                  ? `<span class="info-chip chip-reserve">📞 예약 추천 · ${slot.reserveWhere}</span>`
-                  : '<span class="info-chip chip-noreserve">🚶 예약 불필요</span>'}
-              </div>
-              ${slot.move ? `<div class="slot-move"><span class="move-icon">→</span> ${slot.move}</div>` : ''}
-            </div>
-          `).join('')}
-        </div>
-      </div>
-    `;
-    container.appendChild(section);
-    if (di < data.days.length - 1) {
-      const div = document.createElement('div');
-      div.className = 'page-divider';
-      div.style.marginBottom = '8px';
-      container.appendChild(div);
-    }
-  });
-
-  // 비 오는 날 코스
-  document.getElementById('rainCourses').innerHTML = data.rainCourses.map(r => `
-    <div class="rain-card">
-      <div class="rain-icon">${r.emoji}</div>
-      <div><div class="rain-place">${r.place}</div><div class="rain-desc">${r.desc}</div></div>
-    </div>
-  `).join('');
-
-  // 예산
-  document.getElementById('budgetBody').innerHTML = data.budget.map(b => `
-    <tr><td>${b.item}</td><td>${b.desc}</td><td class="amount">${b.amount}</td></tr>
-  `).join('') + `
-    <tr class="budget-total-row">
-      <td colspan="2"><strong>1인 총 예상 비용</strong></td>
-      <td class="amount">${data.budgetTotal}</td>
-    </tr>
-  `;
-
-  // 아이 동반 팁 (조건부)
-  const hasChild = data.extras.includes('어린 아이 동반');
-  document.getElementById('kidsTipSection').style.display = hasChild ? 'block' : 'none';
-
-  // 현지인 팁
-  document.getElementById('localTipText').textContent = `"${data.localTip}"`;
-
-  const transportEl = document.getElementById('transportTips');
-  if (transportEl && data.transportTips) {
-    transportEl.innerHTML = data.transportTips.map(([label,val]) => `<div class="info-row"><div class="info-row-label">${label}</div><div class="info-row-val">${val}</div></div>`).join('');
-  }
-
-  const reserveEl = document.getElementById('reserveTips');
-  if (reserveEl && data.reserveTips) {
-    reserveEl.innerHTML = data.reserveTips.map(r => `<div class="info-row"><div class="info-row-label">${r.place}</div><div class="info-row-val">${r.desc}</div></div>`).join('');
-  }
-
-  const hiddenFoodEl = document.getElementById('hiddenFoodTips');
-  if (hiddenFoodEl && data.hiddenFoodTips) {
-    hiddenFoodEl.innerHTML = data.hiddenFoodTips.map(([place,desc]) => `<div class="kids-tip-row"><div class="kids-tip-icon">⭐</div><div><strong>${place}</strong> · ${desc}</div></div>`).join('');
-  }
-
-  const stayEl = document.getElementById('stayTips');
-  if (stayEl && data.stayTips) {
-    stayEl.innerHTML = data.stayTips.map(([place,desc]) => `<div class="info-row"><div class="info-row-label">${place}</div><div class="info-row-val">${desc}</div></div>`).join('');
-  }
-
+  const meta=[`${data.companion||'미정'} 여행`,(data.themes||[]).join(' + ')||'자유 여행',data.dateType==='미정'?'날짜 미정':`${data.dateStart} ~ ${data.dateEnd}`,...(data.extras||[])];
+  document.getElementById('coverMeta').innerHTML=meta.filter(Boolean).map(t=>`<div class="cover-meta-item"><div class="cover-dot"></div><div class="cover-meta-text">${t}</div></div>`).join('');
+  const container=document.getElementById('daySchedules');container.innerHTML='';
+  (data.days||[]).forEach((day,di)=>{const section=document.createElement('div');section.innerHTML=`
+    <div class="section-header"><span class="section-badge">${(day.day||`Day ${di+1}`).toUpperCase()}</span><span class="section-title">📅 ${day.area||''}</span><div class="section-line"></div></div>
+    <div class="day-block"><div class="day-header"><span class="day-num">${day.day||`Day ${di+1}`}</span><span class="day-area">${day.area||''}</span><span class="day-theme">${day.theme||''}</span></div><div class="slot-cards">
+      ${(day.slots||[]).map(slot=>`<div class="slot-card"><div class="slot-card-top"><span class="slot-time">${slot.time||''}</span><div class="slot-main"><div class="slot-place-row"><span class="slot-emoji">${slot.emoji||'📍'}</span><span class="slot-place">${slot.place||''}</span><span class="slot-tag">${slot.tag||''}</span></div><div class="slot-address">📍 ${slot.address||''}</div><div class="slot-desc">${slot.desc||''}</div><div class="slot-why">💡 ${slot.why||''}</div></div></div><div class="slot-card-bottom"><span class="info-chip ${slot.waiting==='많음'?'chip-wait':'chip-nowait'}">${slot.waiting==='많음'?'⏳ 대기 많음':'✅ 대기 확인'}</span><span class="info-chip chip-kids">👶 동반 가능 여부 확인</span><span class="info-chip ${slot.reserve?'chip-reserve':'chip-noreserve'}">${slot.reserve?'📞 예약 추천 · '+(slot.reserveWhere||'공식 채널 확인'):'🚶 예약 여부 확인'}</span></div>${slot.move?`<div class="slot-move">→ ${slot.move}</div>`:''}</div>`).join('')}
+    </div></div>`;container.appendChild(section);if(di<(data.days||[]).length-1){const div=document.createElement('div');div.className='page-divider';container.appendChild(div);}});
+  document.getElementById('transportTips').innerHTML=(data.transportTips||[]).map(([l,v])=>`<div class="info-row"><div class="info-row-label">${l}</div><div class="info-row-val">${v}</div></div>`).join('');
+  document.getElementById('reserveTips').innerHTML=(data.reserveTips||[]).map(r=>`<div class="info-row"><div class="info-row-label">${r.place}</div><div class="info-row-val">${r.desc}</div></div>`).join('');
+  document.getElementById('rainCourses').innerHTML=(data.rainCourses||[]).map(r=>`<div class="rain-card"><div class="rain-icon">${r.emoji}</div><div><div class="rain-place">${r.place}</div><div class="rain-desc">${r.desc}</div></div></div>`).join('');
+  document.getElementById('budgetBody').innerHTML=(data.budget||[]).map(b=>`<tr><td>${b.item}</td><td>${b.desc}</td><td class="amount">${b.amount}</td></tr>`).join('')+`<tr class="budget-total-row"><td colspan="2"><strong>1인 총 예상 비용</strong></td><td class="amount">${data.budgetTotal}</td></tr>`;
+  document.getElementById('hiddenFoodTips').innerHTML=(data.hiddenFoodTips||[]).map(([p,d])=>`<div class="kids-tip-row"><div class="kids-tip-icon">⭐</div><div><strong>${p}</strong> · ${d}</div></div>`).join('');
+  document.getElementById('stayTips').innerHTML=(data.stayTips||[]).map(([p,d])=>`<div class="info-row"><div class="info-row-label">${p}</div><div class="info-row-val">${d}</div></div>`).join('');
+  document.getElementById('kidsTipSection').style.display=(data.extras||[]).includes('어린 아이 동반')?'block':'none';
+  document.getElementById('localTipText').textContent=`"${data.localTip}"`;
 }
-
 render(tripData);
-
-// ── PDF 다운로드 ──
-function downloadPDF() {
-  const btn = document.getElementById('dlBtn');
-  btn.textContent = '생성 중...';
-  btn.disabled = true;
-
-  const el = document.getElementById('pdf-content');
-  const filename = `Journiro_${tripData.destination}_${tripData.duration}.pdf`;
-
-  html2pdf().set({
-    margin: 0,
-    filename,
-    image: { type: 'jpeg', quality: 0.97 },
-    html2canvas: { scale: 2, useCORS: true, letterRendering: true },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  }).from(el).save().then(() => {
-    btn.textContent = '⬇ PDF 다운로드';
-    btn.disabled = false;
-  });
-}
+function downloadPDF(){const btn=document.getElementById('dlBtn');btn.textContent='생성 중...';btn.disabled=true;const filename=`Journiro_${tripData.destination}_${tripData.duration}.pdf`;html2pdf().set({margin:0,filename,image:{type:'jpeg',quality:.97},html2canvas:{scale:2,useCORS:true,letterRendering:true},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(document.getElementById('pdf-content')).save().then(()=>{btn.textContent='⬇ PDF 다운로드';btn.disabled=false;});}
 </script>
 </body>
 </html>
