@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>Journiro 맞춤 PDF 가이드</title>
+<title>Journiro PDF Generator</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Noto+Sans+KR:wght@300;400;500;700&family=Nanum+Pen+Script&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
@@ -79,6 +79,74 @@ body {
 
 .cover-intro { background: rgba(46,196,160,0.06); border-left: 3px solid #2ec4a0; border-radius: 0 10px 10px 0; padding: 14px 18px; }
 .cover-intro-text { font-family: 'Nanum Pen Script', cursive; font-size: 18px; color: #3d5a52; line-height: 1.8; }
+
+/* ── LANDMARK VISUAL ── */
+.landmark-card {
+  margin: 22px 0 20px;
+  height: 150px;
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(135deg, #dff8f2 0%, #f7efe0 100%);
+  border: 1px solid #e2d9c8;
+  box-shadow: inset 0 -30px 60px rgba(46,196,160,0.08);
+}
+.landmark-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.75) 1px, transparent 1px);
+  background-size: 18px 18px;
+  opacity: 0.35;
+}
+.landmark-sky {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 18% 20%, rgba(255,255,255,0.95) 0 10px, transparent 11px),
+              radial-gradient(circle at 76% 28%, rgba(255,255,255,0.75) 0 16px, transparent 17px);
+}
+.landmark-emoji {
+  position: absolute;
+  right: 28px;
+  bottom: 16px;
+  font-size: 76px;
+  line-height: 1;
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,0.12));
+}
+.landmark-title {
+  position: absolute;
+  left: 24px;
+  bottom: 42px;
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a15;
+  letter-spacing: -0.4px;
+}
+.landmark-sub {
+  position: absolute;
+  left: 24px;
+  bottom: 22px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #7a6d55;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+.landmark-wave {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  bottom: -18px;
+  height: 58px;
+  background: rgba(46,196,160,0.14);
+  border-radius: 50% 50% 0 0;
+}
+.landmark-card.tokyo { background: linear-gradient(135deg, #f5efe6 0%, #ffe4df 100%); }
+.landmark-card.seoul { background: linear-gradient(135deg, #eaf5ff 0%, #f6efe2 100%); }
+.landmark-card.busan { background: linear-gradient(135deg, #dff7ff 0%, #e8faf5 100%); }
+.landmark-card.jeju { background: linear-gradient(135deg, #e8faf5 0%, #f5f0e8 100%); }
+.landmark-card.osaka { background: linear-gradient(135deg, #fff2df 0%, #f7e7ff 100%); }
 
 /* ── SECTION HEADER ── */
 .section-header {
@@ -178,8 +246,8 @@ body {
 
 /* DISCLAIMER */
 .disclaimer { margin: 0 52px 40px; background: #fff8f0; border: 1px solid #f0e0c0; border-left: 3px solid #f0a070; border-radius: 0 8px 8px 0; padding: 12px 16px; display: flex; gap: 10px; align-items: flex-start; }
-.disclaimer-text { font-size: 9px; color: #8a6a50; line-height: 1.7; }
-.disclaimer-text strong { color: #7a5a40; }
+.disclaimer-text { font-size: 11px; color: #8a6a50; line-height: 1.8; font-weight: 500; }
+.disclaimer-text strong { color: #7a5a40; background: #fff0c2; padding: 1px 4px; border-radius: 4px; font-weight: 800; }
 
 /* FOOTER */
 .pdf-footer { padding: 18px 52px; border-top: 1px solid #e2d9c8; display: flex; justify-content: space-between; align-items: center; background: #f5f0e8; }
@@ -205,14 +273,23 @@ body {
   <!-- ① COVER -->
   <div class="cover">
     <div class="cover-logo">Journiro · AI Travel Guide</div>
-    <div class="cover-destination" id="coverDestination">제주도</div>
-    <div class="cover-duration" id="coverDuration">3박 4일</div>
+    <div class="cover-destination" id="coverDestination">부산</div>
+    <div class="cover-duration" id="coverDuration">2박 3일</div>
     <div class="cover-subtitle">나만을 위한 맞춤 여행 가이드</div>
     <div class="cover-meta" id="coverMeta">
       <div class="cover-meta-item"><div class="cover-dot"></div><div class="cover-meta-text">2인 여행 · 연인</div></div>
       <div class="cover-meta-item"><div class="cover-dot"></div><div class="cover-meta-text">맛집 + 카페 테마</div></div>
       <div class="cover-meta-item"><div class="cover-dot"></div><div class="cover-meta-text">날짜 미정</div></div>
     </div>
+
+    <div class="landmark-card busan" id="landmarkCard">
+      <div class="landmark-sky"></div>
+      <div class="landmark-wave"></div>
+      <div class="landmark-title" id="landmarkTitle">Gwangandaegyo Bridge</div>
+      <div class="landmark-sub" id="landmarkSub">Signature Landmark</div>
+      <div class="landmark-emoji" id="landmarkEmoji">🌉</div>
+    </div>
+
     <div class="cover-intro">
       <div class="cover-intro-text" id="coverIntro">"파도 소리를 들으며 느리게 걷는 제주, 서로의 손을 꼭 잡고 골목골목을 누비는 두 사람의 이야기 ✨"</div>
     </div>
@@ -355,7 +432,7 @@ body {
   </div>
   <div class="info-section">
     <div class="info-box">
-      <div class="kids-tips">
+      <div class="kids-tips" id="hiddenFoodTips">
         <div class="kids-tip-row"><div class="kids-tip-icon">⭐</div><div>관광객 많은 흑돼지 거리보다 <strong>돈사돈 본관</strong> 같은 현지 근고기집 만족도가 높은 편이에요.</div></div>
         <div class="kids-tip-row"><div class="kids-tip-icon">⭐</div><div>성산 근처는 작은 해녀식당들이 가성비와 신선도가 좋아 현지인 방문이 많아요.</div></div>
         <div class="kids-tip-row"><div class="kids-tip-icon">⭐</div><div>우도에서는 프랜차이즈보다 땅콩 아이스크림 로컬 매장 이용 추천.</div></div>
@@ -370,7 +447,7 @@ body {
     <div class="section-line"></div>
   </div>
   <div class="info-section">
-    <div class="info-box">
+    <div class="info-box" id="stayTips">
       <div class="info-row"><div class="info-row-label">연인 여행</div><div class="info-row-val">애월 · 함덕 지역 추천 · 감성 숙소와 카페 접근성이 좋아요.</div></div>
       <div class="info-row"><div class="info-row-label">가족 여행</div><div class="info-row-val">중문 · 서귀포 추천 · 리조트와 대형마트 접근성이 좋아요.</div></div>
       <div class="info-row"><div class="info-row-label">아이 동반</div><div class="info-row-val">함덕 해변 근처 숙소 추천 · 수심이 얕고 산책로가 좋아요.</div></div>
@@ -382,7 +459,7 @@ body {
   <!-- ⑧ 면책 고지 -->
   <div class="disclaimer">
     <span style="font-size:13px;flex-shrink:0;">⚠️</span>
-    <p class="disclaimer-text">본 가이드는 AI가 생성한 <strong>참고용 정보</strong>입니다. 실제 영업시간, 주소, 가격, 예약 가능 여부, 노키즈존 정책 등은 여행 전 반드시 다시 한번 직접 확인하시기 바랍니다. Journiro는 정보의 정확성에 대해 책임을 지지 않으며, 이로 인한 불이익의 책임은 이용자 본인에게 있습니다.</p>
+    <p class="disclaimer-text"><strong>본 가이드는 AI가 생성한 참고용 정보</strong>입니다. 실제 영업시간, 주소, 가격, 예약 가능 여부, 노키즈존 정책 등은 <strong>여행 전 반드시 다시 한번 직접 확인</strong>하시기 바랍니다. Journiro는 정보의 정확성에 대해 책임을 지지 않으며, 이로 인한 불이익의 책임은 이용자 본인에게 있습니다.</p>
   </div>
 
   <!-- FOOTER -->
@@ -396,168 +473,152 @@ body {
 
 <script>
 // ── 실제 데이터 연동 ──
-// 메인 페이지(index.html)에서 일정 생성 성공 시 localStorage에 저장한 데이터를 불러옵니다.
-// 데이터가 없으면 샘플 데이터로 보여줍니다.
+// 미리보기 기본값은 부산으로 표시됩니다.
+// 실제 배포 후에는 메인 페이지에서 저장한 localStorage 데이터가 우선 반영됩니다.
 
 const sampleTripData = {
-  destination: '제주도',
-  duration: '3박 4일',
-  companion: '연인',
-  extras: [],
-  themes: ['맛집 탐방', '카페 투어'],
-  dateType: '미정',
-  dateStart: '',
-  dateEnd: '',
-  intro: '파도 소리를 들으며 느리게 걷는 제주, 서로의 손을 꼭 잡고 골목골목을 누비는 두 사람의 이야기 ✨',
-  localTip: '제주 현지인들은 관광객이 많은 성산일출봉보다 이른 아침 한적한 우도 자전거 투어를 더 즐겨요. 오전 7시 이전 첫 배를 타면 인파 없이 온전한 풍경을 볼 수 있어요.',
-  days: [
-    {
-      day: 'Day 1', area: '애월 & 한림', theme: '감성 카페 & 해안 드라이브',
-      slots: [
-        {
-          time: '오전', emoji: '☕', place: '카페 오드트', tag: '카페',
-          address: '제주시 애월읍 애월해안로 1324',
-          desc: '애월 해안도로 뷰 맛집 카페. 넓은 통창으로 제주 바다를 보며 브런치를 즐길 수 있어요.',
-          why: '애월 해안 뷰가 좋은 카페 중 하나로 여행 시작에 잘 어울려요.',
-          waiting: '보통', nokids: false, reserve: false, reserveWhere: '',
-          move: '차로 약 15분 → 협재해수욕장'
-        },
-        {
-          time: '오후', emoji: '🌊', place: '협재해수욕장', tag: '자연',
-          address: '제주시 한림읍 협재리 2497-1',
-          desc: '에메랄드빛 바다와 비양도가 한눈에 보이는 제주 대표 해변이에요.',
-          why: '물색이 아름답고 산책과 사진 모두 만족도가 높아요.',
-          waiting: '없음', nokids: false, reserve: false, reserveWhere: '',
-          move: '차로 약 5분 → 한림공원'
-        },
-        {
-          time: '저녁', emoji: '🐷', place: '흑돈가 제주본점', tag: '맛집',
-          address: '제주시 연동 272-15',
-          desc: '제주 흑돼지 전문점. 직화 구이로 즐기는 제주산 흑돼지를 맛볼 수 있어요.',
-          why: '여행 첫날 저녁 식사로 만족도가 높은 대표 흑돼지 후보예요.',
-          waiting: '많음', nokids: false, reserve: true, reserveWhere: '네이버 예약 또는 전화 확인',
-          move: ''
-        }
-      ]
-    }
-  ],
-  rainCourses: [
-    { emoji: '🎨', place: '제주도립미술관', desc: '제주 작가들의 작품을 감상할 수 있는 실내 미술관. 비 오는 날 오전 방문 시 한산해요.' },
-    { emoji: '🛍️', place: '동문재래시장', desc: '지역 특산품 쇼핑. 한라봉, 흑돼지 가공식품, 감귤 초콜릿 등 기념품 구매에 좋아요.' },
-    { emoji: '☕', place: '봄날 카페', desc: '애월 대형 실내 카페. 창밖으로 비 내리는 제주 바다를 바라보며 여유롭게 시간을 보내기 좋아요.' }
-  ],
-  budget: [
-    { item: '✈️ 교통', desc: '왕복 교통비 또는 현지 이동비', amount: '약 100,000원' },
-    { item: '🏨 숙소', desc: '여행 기간 기준 예상 숙박비', amount: '약 150,000원' },
-    { item: '🍜 식비', desc: '식사·카페·간식 포함', amount: '약 120,000원' },
-    { item: '🚗 현지 이동', desc: '렌터카·택시·대중교통', amount: '약 100,000원' },
-    { item: '🎯 입장료', desc: '관광지 입장, 체험 등', amount: '약 40,000원' },
-    { item: '🛍️ 쇼핑·기타', desc: '기념품, 간식 등', amount: '약 50,000원' },
-  ],
-  budgetTotal: '약 560,000원'
+  destination:'부산',
+  duration:'2박 3일',
+  companion:'가족',
+  extras:['노약자 동반'],
+  themes:['맛집 탐방'],
+  dateType:'미정',
+  dateStart:'',
+  dateEnd:'',
+  intro:'바다와 맛집, 가족 모두가 편안하게 즐기는 부산 여행 ✨',
+  days:[
+    {day:'Day 1',area:'해운대 · 동백섬',theme:'바다 산책 & 부산 맛집',slots:[
+      {time:'오전',emoji:'🌊',place:'해운대해수욕장',tag:'바다',desc:'부산 여행의 시작으로 가장 부담 없는 바다 산책 코스예요.'},
+      {time:'오후',emoji:'🌿',place:'동백섬',tag:'산책',desc:'해운대와 가까워 노약자 동반 가족 여행에도 무리 없이 걷기 좋아요.'},
+      {time:'저녁',emoji:'🥩',place:'해운대암소갈비집',tag:'맛집',desc:'부산에서 오래 사랑받은 갈비 식당으로 저녁 식사 후보로 좋아요.'}
+    ]},
+    {day:'Day 2',area:'남포동 · 영도',theme:'로컬 시장 & 항구 분위기',slots:[
+      {time:'오전',emoji:'🏘️',place:'흰여울문화마을',tag:'산책',desc:'바다를 따라 걷는 골목 풍경이 좋아 부산다운 분위기를 느끼기 좋아요.'},
+      {time:'오후',emoji:'🛍️',place:'국제시장',tag:'시장',desc:'먹거리와 쇼핑을 함께 즐길 수 있는 부산 대표 시장 코스예요.'},
+      {time:'저녁',emoji:'🍕',place:'이재모피자',tag:'맛집',desc:'남포동 일정과 묶기 좋은 부산 인기 식당 후보예요.'}
+    ]}
+  ]
 };
 
-function getStoredTripData() {
+function getStoredTripData(){
   try {
     const raw = localStorage.getItem('journiroPdfData');
-    if (!raw) return null;
-    const data = JSON.parse(raw);
-    if (!data || !data.destination || !Array.isArray(data.days)) return null;
-    return data;
-  } catch (e) {
-    console.error('PDF data load failed:', e);
-    return null;
-  }
+    if(!raw) return null;
+    const d = JSON.parse(raw);
+    if(!d || !d.destination || !Array.isArray(d.days)) return null;
+    return d;
+  } catch(e) { return null; }
 }
 
-function enrichSlot(slot, idx, dayIdx, destination) {
-  const next = { ...slot };
-  if (!next.address) next.address = '방문 전 지도 앱에서 정확한 주소와 영업시간을 확인하세요.';
-  if (!next.why) next.why = `${destination} 여행 동선에 넣기 좋은 장소예요. 실제 방문 전 영업시간과 휴무를 확인하세요.`;
-  if (!next.waiting) next.waiting = idx === 2 ? '보통' : '없음';
-  if (typeof next.nokids !== 'boolean') next.nokids = false;
-  if (typeof next.reserve !== 'boolean') next.reserve = idx === 2;
-  if (!next.reserveWhere) next.reserveWhere = next.reserve ? '네이버 지도/공식 채널 확인' : '';
-  if (!next.move) {
-    const moveHints = ['다음 장소까지 지도 앱 기준 이동시간 확인', '식사 장소까지 이동 전 영업시간 확인', ''];
-    next.move = moveHints[idx] || '';
-  }
-  return next;
+function norm(dest=''){
+  if(dest.includes('제주')) return '제주';
+  if(dest.includes('부산')) return '부산';
+  if(dest.includes('서울')) return '서울';
+  if(dest.includes('도쿄')) return '도쿄';
+  if(dest.includes('오사카')) return '오사카';
+  return dest;
 }
 
-function makeRainCourses(destination) {
-  return [
-    { emoji: '🎨', place: `${destination} 실내 전시·미술관`, desc: '비 오는 날에는 실내 전시나 미술관 중심으로 동선을 바꾸면 이동 피로가 줄어요.' },
-    { emoji: '🛍️', place: `${destination} 시장·쇼핑몰`, desc: '지역 특산품과 간식을 함께 둘러볼 수 있어 날씨 영향이 적어요.' },
-    { emoji: '☕', place: `${destination} 대형 카페`, desc: '창가 좌석이 있는 실내 카페에서 여유롭게 쉬어가기 좋아요.' }
-  ];
-}
-
-function makeBudget(duration) {
-  if (duration === '당일치기') {
-    return {
-      budget: [
-        { item: '🚆 교통', desc: '왕복 교통비 또는 현지 이동비', amount: '약 30,000~120,000원' },
-        { item: '🍜 식비', desc: '식사 1~2회 + 카페', amount: '약 30,000~60,000원' },
-        { item: '🎯 입장료', desc: '전시·관광지·체험', amount: '약 10,000~30,000원' },
-        { item: '🛍️ 기타', desc: '간식·기념품', amount: '약 10,000~30,000원' }
-      ],
-      budgetTotal: '약 80,000~240,000원'
-    };
+const CITY = {
+  '부산': {
+    keep:['부산','해운대','광안리','남포','서면','기장','송정','감천','영도','초량','자갈치','센텀','동백섬','BIFF','국제시장','이재모','암소갈비','흰여울'],
+    sampleDays: sampleTripData.days,
+    rain:[['🎨','부산현대미술관','비 오는 날 실내에서 여유롭게 둘러보기 좋은 전시 공간이에요.'],['🛍️','신세계백화점 센텀시티','쇼핑, 식사, 카페를 한 번에 해결하기 좋은 실내 코스예요.'],['🐟','자갈치시장','부산의 로컬 분위기를 실내 위주로 느끼기 좋은 코스예요.']],
+    food:[['초량밀면','부산식 밀면을 부담 없이 맛볼 수 있는 실제 식당 후보예요.'],['해운대암소갈비집','부산에서 오래 사랑받은 갈비 식당으로 예약/대기 확인을 추천해요.'],['이재모피자','남포동 일정에 넣기 좋은 부산 인기 식당이에요.']],
+    stay:{'가족':[['파라다이스 호텔 부산','해운대 바로 앞이라 산책과 식사가 편하고 가족 여행 만족도가 높아요.'],['웨스틴 조선 부산','동백섬 산책로와 가까워 부모님 동반 일정에 좋아요.'],['신라스테이 해운대','해운대 접근성이 좋고 실용적인 가족 숙소 후보예요.']],
+            '연인':[['파라다이스 호텔 부산','오션뷰와 해운대 야경을 함께 즐기기 좋아요.'],['아난티 앳 부산 코브','조용한 휴식형 여행에 어울리는 고급 숙소 후보예요.']],
+            '친구':[['신라스테이 해운대','해운대·광안리 접근성이 좋아 이동이 편해요.'],['토요코인 부산역 1','부산역 접근성이 좋아 짧은 여행에 실용적이에요.']],
+            '혼자':[['토요코인 부산역 1','교통이 편하고 혼자 여행 예산을 아끼기 좋아요.'],['신라스테이 서부산','비즈니스형 숙소를 선호할 때 무난해요.']]},
+    transport:[['노약자 동선','가족·노약자 동반이면 해운대권과 남포동권을 하루에 무리하게 섞지 않는 편이 좋아요.'],['택시 추천','영도·기장 이동은 대중교통보다 택시가 편할 수 있어요.'],['주차 팁','해운대·광안리는 주말 오후 주차가 어려워 오전 이동 추천.']],
+    local:'부산은 해운대권과 영도·남포동권 이동 시간이 꽤 걸려요. 하루에 한 권역씩 묶으면 노약자 동반 여행도 훨씬 편해요.'
+  },
+  '제주': {
+    keep:['제주','애월','협재','성산','서귀포','중문','우도','비자림','함덕','월정','동문','오설록','한라','표선','돈사돈','자매국수','올래국수','명진전복'],
+    sampleDays:[{day:'Day 1',area:'애월 · 협재',theme:'바다 & 카페',slots:[{time:'오전',emoji:'☕',place:'카페 노티드 제주 애월',tag:'카페',desc:'애월 바다와 함께 가볍게 시작하기 좋은 카페 코스예요.'},{time:'오후',emoji:'🌊',place:'협재해수욕장',tag:'바다',desc:'맑은 바다색으로 유명해 산책과 사진 모두 만족도가 높은 장소예요.'},{time:'저녁',emoji:'🥩',place:'돈사돈 본관',tag:'맛집',desc:'제주 흑돼지 식당으로 많이 알려진 실제 식당 후보예요.'}]}],
+    rain:[['🎨','제주도립미술관','비 오는 날에도 제주 감성을 느끼기 좋은 실내 전시 공간이에요.'],['🛍️','동문재래시장','간식과 기념품을 한 번에 해결하기 좋아요.'],['☕','오설록 티뮤지엄','비 오는 날에도 실내에서 차와 디저트를 즐기기 좋아요.']],
+    food:[['자매국수','고기국수 후보로 많이 언급되는 실제 식당이에요.'],['올래국수','제주 고기국수 일정에 넣기 좋은 대표 후보예요.'],['명진전복','동부권 전복돌솥밥 후보로 유명해요.']],
+    stay:{'가족':[['롯데호텔 제주','중문 관광단지 접근성이 좋아 가족·노약자 동반에 편해요.'],['해비치 호텔앤드리조트 제주','동부권 여행과 휴식형 가족 여행에 좋아요.'],['유탑유블레스호텔 제주 함덕','함덕해변 접근성이 좋아 아이 동반에도 편해요.']]},
+    transport:[['렌터카 추천','가족·노약자 동반이면 렌터카가 가장 편해요. 카시트/보험 옵션은 미리 확인하세요.'],['권역 추천','애월·협재 / 성산·구좌 / 중문·서귀포처럼 권역을 나눠 움직이는 게 좋아요.'],['주차 팁','애월 카페와 협재해변은 오후 시간대 혼잡해 오전 방문 추천.']],
+    local:'제주는 동서 이동 시간이 길어요. 하루에 한 권역씩 묶고, 숙소도 동선에 맞춰 잡으면 피로도가 크게 줄어요.'
+  },
+  '서울': {
+    keep:['서울','한남','이태원','성수','안국','북촌','종로','광화문','마포','홍대','명동','인사동','광장시장','리움'],
+    sampleDays:[{day:'Day 1',area:'안국 · 북촌',theme:'문화 & 카페',slots:[{time:'오전',emoji:'🏘️',place:'북촌한옥마을',tag:'산책',desc:'서울의 전통 골목 분위기를 느끼기 좋은 코스예요.'},{time:'오후',emoji:'☕',place:'카페 레이어드 안국점',tag:'카페',desc:'안국 일정과 함께 묶기 좋은 인기 카페예요.'},{time:'저녁',emoji:'🥢',place:'광장시장',tag:'시장',desc:'서울 먹거리 탐방에 좋은 대표 시장이에요.'}]}],
+    rain:[['🎨','리움미술관','비 오는 날에도 쾌적하게 보기 좋은 실내 미술관이에요.'],['🏛️','국립현대미술관 서울','전시와 산책 동선을 함께 잡기 좋아요.'],['🛍️','더현대 서울','쇼핑과 식사를 한 번에 해결하기 좋은 실내 코스예요.']],
+    food:[['광장시장','먹거리 탐방에 좋은 서울 대표 시장이에요.'],['난포 성수','성수권 한식 식당 후보예요.'],['오월의종 한남점','한남권 베이커리 후보예요.']],
+    stay:{'가족':[['나인트리 프리미어 호텔 인사동','궁궐·박물관 접근성이 좋아 가족 여행에 편해요.'],['롯데호텔 서울','명동·시청권 이동이 편리해 부모님 동반에 좋아요.']]},
+    transport:[['지하철 추천','서울은 지하철+도보 조합이 가장 안정적이에요.'],['권역 팁','종로·안국 / 성수 / 한남을 하루에 모두 넣기보다 1~2개 권역으로 줄이는 게 좋아요.']],
+    local:'서울은 지하철 동선만 잘 잡아도 이동 피로가 줄어요. 하루에 강북/강남을 과하게 섞지 않는 게 좋아요.'
   }
-  return {
-    budget: [
-      { item: '✈️ 교통', desc: '왕복 교통비 또는 현지 이동비', amount: '약 100,000원' },
-      { item: '🏨 숙소', desc: '여행 기간 기준 예상 숙박비', amount: '약 150,000원' },
-      { item: '🍜 식비', desc: '식사·카페·간식 포함', amount: '약 120,000원' },
-      { item: '🚗 현지 이동', desc: '렌터카·택시·대중교통', amount: '약 100,000원' },
-      { item: '🎯 입장료', desc: '관광지 입장, 체험 등', amount: '약 40,000원' },
-      { item: '🛍️ 쇼핑·기타', desc: '기념품, 간식 등', amount: '약 50,000원' }
-    ],
-    budgetTotal: '약 560,000원'
-  };
+};
+
+function cityData(dest){ return CITY[norm(dest)] || null; }
+function slotBelongsToCity(slot, city){
+  if(!city) return true;
+  const txt = `${slot.place||''} ${slot.address||''} ${slot.desc||''}`;
+  return city.keep.some(k => txt.includes(k));
 }
-
-function makeLocalTip(destination, companion, extras) {
-  if ((destination || '').includes('제주')) {
-    return '제주는 동서 이동 시간이 생각보다 길어요. 하루에 동쪽과 서쪽을 모두 넣기보다 권역을 나눠 움직이면 훨씬 편해요.';
-  }
-  if ((destination || '').includes('도쿄')) {
-    return '도쿄는 환승이 많아 보여도 같은 노선 안에서 움직이면 훨씬 편해요. 하루 권역을 1~2개로 제한하는 게 좋아요.';
-  }
-  if ((destination || '').includes('부산')) {
-    return '부산은 해운대와 영도/남포동 동선이 꽤 떨어져 있어 하루에 한 권역씩 묶는 게 만족도가 높아요.';
-  }
-  return '여행지는 넓게 보기보다 하루 권역을 좁게 잡으면 이동 피로가 줄고 만족도가 높아져요.';
+function forceCityDays(days, destination){
+  const city = cityData(destination);
+  if(!city) return days || [];
+  const cleaned = (days||[]).map(day => ({...day,slots:(day.slots||[]).filter(slot => slotBelongsToCity(slot, city))})).filter(d => d.slots.length);
+  return cleaned.length ? cleaned : city.sampleDays;
 }
-
-function buildTripData() {
-  const stored = getStoredTripData();
-  if (!stored) return sampleTripData;
-
-  const budgetInfo = makeBudget(stored.duration);
-  return {
-    destination: stored.destination,
-    duration: stored.duration,
-    companion: stored.companion || '미정',
-    extras: stored.extras || [],
-    themes: stored.themes || [],
-    dateType: stored.dateType || '미정',
-    dateStart: stored.dateStart || '',
-    dateEnd: stored.dateEnd || '',
-    intro: stored.intro || `${stored.destination} 맞춤 여행 일정입니다.`,
-    localTip: makeLocalTip(stored.destination, stored.companion, stored.extras || []),
-    days: (stored.days || []).map((day, dayIdx) => ({
-      ...day,
-      slots: (day.slots || []).map((slot, idx) => enrichSlot(slot, idx, dayIdx, stored.destination))
-    })),
-    rainCourses: makeRainCourses(stored.destination),
-    budget: budgetInfo.budget,
-    budgetTotal: budgetInfo.budgetTotal
-  };
+function enrichSlot(slot, idx, dayIdx, dest){
+  const n={...slot};
+  if(!n.address) n.address='방문 전 지도 앱에서 정확한 주소와 영업시간을 확인하세요.';
+  if(!n.why) n.why=`${dest} 여행 동선에 넣기 좋은 장소예요. 실제 방문 전 영업시간과 휴무를 확인하세요.`;
+  if(!n.waiting) n.waiting=idx===2?'보통':'없음';
+  if(typeof n.nokids!=='boolean') n.nokids=false;
+  if(typeof n.reserve!=='boolean') n.reserve=idx===2;
+  if(!n.reserveWhere) n.reserveWhere=n.reserve?'네이버 지도/공식 채널 확인':'';
+  if(!n.move) n.move=idx<2?'다음 장소까지 지도 앱 기준 이동시간 확인':'';
+  return n;
 }
-
+function makeRainCourses(dest){ const c=cityData(dest); return (c?.rain||[['🎨',`${dest} 실내 전시·미술관`,'비 오는 날에는 실내 코스로 바꾸면 이동 피로가 줄어요.']]).map(x=>({emoji:x[0],place:x[1],desc:x[2]})); }
+function makeReserveTips(data){ const c=cityData(data.destination); const food=(c?.food||[]).map(([place,desc])=>({place,desc:`${desc} 방문 전 영업시간, 브레이크타임, 예약 가능 여부를 확인하세요.`})); return food.length ? food : (data.days||[]).flatMap(d=>d.slots||[]).slice(0,3).map(s=>({place:s.place,desc:'방문 전 지도 앱에서 예약/웨이팅 여부를 확인하세요.'}));}
+function makeTransportTips(dest, extras){ let tips=cityData(dest)?.transport||[['권역 추천','하루에 1~2개 권역으로 묶으면 이동 피로가 줄어요.']]; if((extras||[]).includes('노약자 동반')) tips=[['노약자 동선','계단과 긴 도보를 줄이고 택시 또는 주차 편한 장소 위주로 이동하세요.'],...tips]; return tips.slice(0,5);}
+function makeStayTips(dest, comp, extras){ const c=cityData(dest); const type=(comp&&c?.stay?.[comp])?comp:'가족'; let rows=c?.stay?.[type]||[[`${dest} 중심권 호텔`,'이동과 식사가 편한 중심권 숙소를 추천해요.']]; const prefix=(extras||[]).includes('노약자 동반')?'노약자 동반 기준 · ':(extras||[]).includes('어린 아이 동반')?'아이 동반 기준 · ':`${comp||'여행'} 기준 · `; return rows.slice(0,3).map(([p,d])=>[p,prefix+d]);}
+function makeBudget(duration){
+  if(duration==='당일치기') return {budget:[{item:'🚆 교통비',desc:'왕복 교통비 또는 현지 이동비',amount:'약 30,000~120,000원'},{item:'🍜 식비',desc:'식사 1~2회 + 카페',amount:'약 30,000~60,000원'},{item:'🎯 입장료',desc:'전시·관광지·체험',amount:'약 10,000~30,000원'},{item:'🛍️ 기타',desc:'간식·기념품',amount:'약 10,000~30,000원'}],budgetTotal:'약 80,000~240,000원'};
+  return {budget:[{item:'✈️ 항공/교통',desc:'왕복 교통비 또는 장거리 이동비',amount:'약 100,000원'},{item:'🏨 숙소',desc:`${duration||'여행 기간'} 기준 1인 예상 숙박비`,amount:'약 150,000원'},{item:'🍜 식비',desc:'식사·카페·간식 포함',amount:'약 120,000원'},{item:'🚗 렌터카/택시',desc:'현지 이동비',amount:'약 100,000원'},{item:'🎯 입장료',desc:'관광지 입장, 체험 등',amount:'약 40,000원'},{item:'🛍️ 쇼핑·기타',desc:'기념품, 간식 등',amount:'약 50,000원'}],budgetTotal:'약 560,000원'};
+}
+function buildTripData(){
+  const s=getStoredTripData() || sampleTripData;
+  const budgetInfo=makeBudget(s.duration);
+  const c=cityData(s.destination);
+  const days=forceCityDays(s.days||[], s.destination).map((d,di)=>({...d,slots:(d.slots||[]).map((sl,i)=>enrichSlot(sl,i,di,s.destination))}));
+  const base={destination:s.destination,duration:s.duration,companion:s.companion||'미정',extras:s.extras||[],themes:s.themes||[],dateType:s.dateType||'미정',dateStart:s.dateStart||'',dateEnd:s.dateEnd||'',intro:s.intro||`${s.destination} 맞춤 여행 일정입니다.`,days,rainCourses:makeRainCourses(s.destination),budget:budgetInfo.budget,budgetTotal:budgetInfo.budgetTotal};
+  base.localTip=(c?.local||'하루 권역을 좁게 잡으면 이동 피로가 줄어요.')+((base.extras||[]).includes('노약자 동반')?' 노약자 동반이라면 카페나 숙소 휴식 시간을 꼭 넣어주세요.':'');
+  base.transportTips=makeTransportTips(base.destination,base.extras);
+  base.reserveTips=makeReserveTips(base);
+  base.hiddenFoodTips=(c?.food||[[`${base.destination} 현지 식당 후보`,'관광지 바로 앞보다 한 블록 안쪽 식당이 대기와 가격 부담이 적은 편이에요.']]);
+  base.stayTips=makeStayTips(base.destination,base.companion,base.extras);
+  return base;
+}
 const tripData = buildTripData();
+
+
+function getLandmarkData(destination = '') {
+  const d = norm(destination);
+  const map = {
+    '도쿄': { cls: 'tokyo', title: 'Tokyo Tower', sub: 'Tokyo · Japan', emoji: '🗼' },
+    '서울': { cls: 'seoul', title: 'N Seoul Tower', sub: 'Seoul · Korea', emoji: '🗼' },
+    '부산': { cls: 'busan', title: 'Gwangandaegyo Bridge', sub: 'Busan · Korea', emoji: '🌉' },
+    '제주': { cls: 'jeju', title: 'Hallasan & Jeju Sea', sub: 'Jeju · Korea', emoji: '⛰️' },
+    '오사카': { cls: 'osaka', title: 'Osaka Castle', sub: 'Osaka · Japan', emoji: '🏯' }
+  };
+  return map[d] || { cls: 'busan', title: `${destination} Signature`, sub: 'Travel Landmark', emoji: '📍' };
+}
+function renderLandmark(destination) {
+  const data = getLandmarkData(destination);
+  const card = document.getElementById('landmarkCard');
+  if (!card) return;
+  card.className = `landmark-card ${data.cls}`;
+  document.getElementById('landmarkTitle').textContent = data.title;
+  document.getElementById('landmarkSub').textContent = data.sub;
+  document.getElementById('landmarkEmoji').textContent = data.emoji;
+}
 
 // ── 렌더링 ──
 function render(data) {
@@ -565,6 +626,7 @@ function render(data) {
   document.getElementById('coverDestination').textContent = data.destination;
   document.getElementById('coverDuration').textContent = data.duration;
   document.getElementById('coverIntro').textContent = `"${data.intro}"`;
+  renderLandmark(data.destination);
 
   const metaItems = [
     `${data.companion} 여행`,
@@ -656,6 +718,27 @@ function render(data) {
 
   // 현지인 팁
   document.getElementById('localTipText').textContent = `"${data.localTip}"`;
+
+  const transportEl = document.getElementById('transportTips');
+  if (transportEl && data.transportTips) {
+    transportEl.innerHTML = data.transportTips.map(([label,val]) => `<div class="info-row"><div class="info-row-label">${label}</div><div class="info-row-val">${val}</div></div>`).join('');
+  }
+
+  const reserveEl = document.getElementById('reserveTips');
+  if (reserveEl && data.reserveTips) {
+    reserveEl.innerHTML = data.reserveTips.map(r => `<div class="info-row"><div class="info-row-label">${r.place}</div><div class="info-row-val">${r.desc}</div></div>`).join('');
+  }
+
+  const hiddenFoodEl = document.getElementById('hiddenFoodTips');
+  if (hiddenFoodEl && data.hiddenFoodTips) {
+    hiddenFoodEl.innerHTML = data.hiddenFoodTips.map(([place,desc]) => `<div class="kids-tip-row"><div class="kids-tip-icon">⭐</div><div><strong>${place}</strong> · ${desc}</div></div>`).join('');
+  }
+
+  const stayEl = document.getElementById('stayTips');
+  if (stayEl && data.stayTips) {
+    stayEl.innerHTML = data.stayTips.map(([place,desc]) => `<div class="info-row"><div class="info-row-label">${place}</div><div class="info-row-val">${desc}</div></div>`).join('');
+  }
+
 }
 
 render(tripData);
