@@ -852,6 +852,15 @@ function restart() {
   updateProgress(0);
 }
 
+
+function openPdfGuide() {
+  try {
+    window.location.href = 'journiro-pdf.html';
+  } catch (e) {
+    location.href = './journiro-pdf.html';
+  }
+}
+
 </script>
 </body>
 </html>
