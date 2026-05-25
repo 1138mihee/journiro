@@ -693,6 +693,19 @@ ${nokids ? '- 노키즈존은 반드시 제외하고 아이 입장 가능한 곳
 
     const tags = [state.companion, ...state.extras.filter(e => e !== '노키즈존 제외'), ...state.themes.slice(0,2)];
     renderResult(plan, state.destination, state.duration, tags);
+    localStorage.setItem('journiroPdfData', JSON.stringify({
+      destination: state.destination,
+      duration: state.duration,
+      companion: state.companion,
+      extras: state.extras,
+      themes: state.themes,
+      dateType: state.dateType,
+      dateStart: state.dateStart,
+      dateEnd: state.dateEnd,
+      intro: plan.intro || '',
+      days: plan.days || [],
+      createdAt: new Date().toISOString()
+    }));
 
     showScreen('screen-result');
     updateProgress(5);
